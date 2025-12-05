@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import BottomNavigation from '../components/BottomNavigation';
 import Logo from '../components/Logo';
 import BackButton from '../components/BackButton';
 
 const DayStreakScreen: React.FC = () => {
     const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
 
     const currentStreak = 3;
     const weekDays = [
@@ -20,23 +21,11 @@ const DayStreakScreen: React.FC = () => {
         { day: 'Su', date: '24', isActive: false, isCurrent: true },
     ];
 
-    const handleTabPress = (tab: string) => {
-        if (tab === 'home') {
-            navigation.navigate('Dashboard' as never);
-        } else if (tab === 'settings') {
-            navigation.navigate('Profile' as never);
-        } else if (tab === 'notifications') {
-            navigation.navigate('DailyCheckin' as never);
-        } else if (tab === 'community') {
-            navigation.navigate('Profile' as never);
-        }
-    };
-
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
                 {/* Header */}
-                <View style={styles.header}>
+                <View style={[styles.header, { paddingTop: insets.top }]}>
                     <BackButton
                         onPress={() => navigation.goBack()}
                         size={17}
@@ -102,8 +91,6 @@ const DayStreakScreen: React.FC = () => {
                     </Text>
                 </View>
             </ScrollView>
-
-            <BottomNavigation activeTab="home" onTabPress={handleTabPress} />
         </View>
     );
 };
@@ -121,8 +108,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 16,
-        paddingTop: 44,
+        paddingBottom: 16,
         width: '100%',
     },
     headerCenter: {

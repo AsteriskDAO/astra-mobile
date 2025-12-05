@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import BottomNavigation from '../components/BottomNavigation';
 import Logo from '../components/Logo';
 import BackButton from '../components/BackButton';
+import { theme } from '../theme/theme';
 
 const ProfileScreen: React.FC = () => {
     const navigation = useNavigation();
+    const [researchInvitesEnabled, setResearchInvitesEnabled] = useState(true);
 
     const profileData = {
         nickname: 'username',
@@ -16,18 +17,6 @@ const ProfileScreen: React.FC = () => {
         region: 'Europe',
         pregnancy: 'No',
         caretaker: '-',
-    };
-
-    const handleTabPress = (tab: string) => {
-        if (tab === 'settings') {
-            // Already on profile/settings
-        } else if (tab === 'home') {
-            navigation.navigate('Dashboard' as never);
-        } else if (tab === 'notifications') {
-            navigation.navigate('DailyCheckin' as never);
-        } else if (tab === 'community') {
-            navigation.navigate('Profile' as never);
-        }
     };
 
     const handleEditProfile = () => {
@@ -58,19 +47,26 @@ const ProfileScreen: React.FC = () => {
                     <BackButton
                         onPress={() => navigation.goBack()}
                         size={17}
+                        style={styles.backButton}
                     />
                     <View style={styles.headerTitleContainer}>
                         <Text style={styles.headerTitle}>username</Text>
-                        <Logo size={13} tintColor="#FF01B4" />
+                        <Logo size={13} tintColor="#FF01B4" style={styles.asteriskLogo} />
                     </View>
-                    <Ionicons name="person-outline" size={14} color="#61ABC5" />
+                    <View style={styles.profileIconContainer}>
+                        <View style={styles.profileIconCircle}>
+                            <View style={styles.profileIconInnerCircle} />
+                        </View>
+                    </View>
                 </View>
 
                 {/* Profile Information Card */}
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
                         <View style={styles.cardTitleContainer}>
-                            <Ionicons name="person-outline" size={15} color="#232323" />
+                            <View style={styles.profileIconSmall}>
+                                <View style={styles.profileIconInner} />
+                            </View>
                             <Text style={styles.cardTitle}>Profile Information</Text>
                         </View>
                         <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
@@ -81,27 +77,27 @@ const ProfileScreen: React.FC = () => {
 
                     <View style={styles.profileGrid}>
                         <View style={styles.profileItem}>
-                            <Text style={styles.profileLabel}>Nickname:</Text>
+                            <Text style={styles.profileLabel}>Nickname</Text>
                             <Text style={styles.profileValue}>{profileData.nickname}</Text>
                         </View>
                         <View style={styles.profileItem}>
-                            <Text style={styles.profileLabel}>Age:</Text>
+                            <Text style={styles.profileLabel}>Age</Text>
                             <Text style={styles.profileValue}>{profileData.age}</Text>
                         </View>
                         <View style={styles.profileItem}>
-                            <Text style={styles.profileLabel}>Ethnicity:</Text>
+                            <Text style={styles.profileLabel}>Ethnicity</Text>
                             <Text style={styles.profileValue}>{profileData.ethnicity}</Text>
                         </View>
                         <View style={styles.profileItem}>
-                            <Text style={styles.profileLabel}>Region:</Text>
+                            <Text style={styles.profileLabel}>Region</Text>
                             <Text style={styles.profileValue}>{profileData.region}</Text>
                         </View>
                         <View style={styles.profileItem}>
-                            <Text style={styles.profileLabel}>Pregnancy:</Text>
+                            <Text style={styles.profileLabel}>Pregnancy</Text>
                             <Text style={styles.profileValue}>{profileData.pregnancy}</Text>
                         </View>
                         <View style={styles.profileItem}>
-                            <Text style={styles.profileLabel}>Caretaker:</Text>
+                            <Text style={styles.profileLabel}>Caretaker</Text>
                             <Text style={styles.profileValue}>{profileData.caretaker}</Text>
                         </View>
                     </View>
@@ -118,7 +114,7 @@ const ProfileScreen: React.FC = () => {
 
                 <TouchableOpacity style={styles.healthCard} onPress={handleMedicationsPress}>
                     <View style={styles.healthCardContent}>
-                        <Ionicons name="pills-outline" size={15} color="#232323" />
+                        <Ionicons name="medical-outline" size={15} color="#232323" />
                         <Text style={styles.healthCardTitle}>Medications</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={8} color="#949494" />
@@ -158,20 +154,28 @@ const ProfileScreen: React.FC = () => {
 
                 {/* Research Invites */}
                 <View style={styles.researchCard}>
-                    <Text style={styles.researchTitle}>Research Invites</Text>
-                    <Text style={styles.researchDescription}>
-                        Researchers may invite you to compensated focus groups in the future.
-                        Would you like to receive invitations?
-                    </Text>
-                    <View style={styles.toggleContainer}>
-                        <View style={styles.toggle}>
-                            <View style={styles.toggleThumb} />
+                    <View style={styles.researchContent}>
+                        <View style={styles.researchTextContainer}>
+                            <Text style={styles.researchTitle}>Research Invites</Text>
+                            <Text style={styles.researchDescription}>
+                                Researchers may invite you to compensated focus groups in the future. Would you like to receive invitations?
+                            </Text>
                         </View>
+                        <TouchableOpacity
+                            style={[
+                                styles.toggle,
+                                researchInvitesEnabled && styles.toggleActive
+                            ]}
+                            onPress={() => setResearchInvitesEnabled(!researchInvitesEnabled)}
+                        >
+                            <View style={[
+                                styles.toggleThumb,
+                                researchInvitesEnabled && styles.toggleThumbActive
+                            ]} />
+                        </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>
-
-            <BottomNavigation activeTab="settings" onTabPress={handleTabPress} />
         </View>
     );
 };
@@ -188,9 +192,15 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 16,
         paddingTop: 42,
-        marginBottom: 8,
+        paddingBottom: 8,
+        marginBottom: 17,
+        position: 'relative',
+    },
+    backButton: {
+        position: 'absolute',
+        left: 0,
+        top: 44,
     },
     headerTitleContainer: {
         flex: 1,
@@ -207,28 +217,62 @@ const styles = StyleSheet.create({
         color: '#232323',
         textAlign: 'center',
     },
-    asterisk: {
-        fontSize: 13,
-        color: '#FF01B4',
+    asteriskLogo: {
+        marginLeft: 2,
+    },
+    profileIconContainer: {
+        position: 'absolute',
+        right: 0,
+        top: 46,
+        width: 14,
+        height: 14,
+    },
+    profileIconCircle: {
+        width: 14,
+        height: 14,
+        borderRadius: 7,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    profileIconInnerCircle: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+        borderWidth: 1.2,
+        borderColor: '#61ABC5',
+        backgroundColor: '#61ABC5',
     },
     card: {
         backgroundColor: '#FFFFFF',
         borderRadius: 15,
         padding: 12,
-        marginBottom: 16,
-        width: 270,
-        alignSelf: 'center',
+        marginBottom: 10,
+        width: '100%',
+        minHeight: 151,
     },
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 12,
+        marginBottom: 23,
     },
     cardTitleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
+    },
+    profileIconSmall: {
+        width: 15,
+        height: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    profileIconInner: {
+        width: 11,
+        height: 12,
+        borderWidth: 1.2,
+        borderColor: '#232323',
+        borderRadius: 5.5,
     },
     cardTitle: {
         fontSize: 13,
@@ -242,9 +286,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#FF01B4',
-        paddingHorizontal: 8,
-        paddingVertical: 3,
+        paddingHorizontal: 4,
+        paddingVertical: 2.5,
         borderRadius: 6,
+        width: 40,
+        height: 20,
+        justifyContent: 'center',
         gap: 4,
     },
     editButtonText: {
@@ -257,11 +304,13 @@ const styles = StyleSheet.create({
     profileGrid: {
         flexDirection: 'column',
         gap: 3,
+        paddingLeft: 20,
     },
     profileItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '100%',
+        width: 123,
+        height: 15,
     },
     profileLabel: {
         fontSize: 10,
@@ -280,14 +329,13 @@ const styles = StyleSheet.create({
     healthCard: {
         backgroundColor: '#FFFFFF',
         borderRadius: 15,
-        paddingVertical: 12,
+        height: 40,
         paddingHorizontal: 12,
         marginBottom: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: 270,
-        alignSelf: 'center',
+        width: '100%',
     },
     healthCardContent: {
         flexDirection: 'row',
@@ -304,13 +352,13 @@ const styles = StyleSheet.create({
     metricsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 16,
-        paddingHorizontal: 25,
+        marginBottom: 10,
+        paddingHorizontal: 24,
+        gap: 5,
     },
     metricCard: {
         backgroundColor: '#FFFFFF',
         borderRadius: 15,
-        padding: 16,
         width: 133,
         height: 55,
         alignItems: 'center',
@@ -322,7 +370,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontFamily: 'Prompt',
         color: '#232323',
-        marginBottom: 4,
+        marginBottom: 7,
         textAlign: 'center',
     },
     metricLabel: {
@@ -336,14 +384,13 @@ const styles = StyleSheet.create({
     streakCard: {
         backgroundColor: '#FFFFFF',
         borderRadius: 15,
-        paddingVertical: 12,
+        height: 40,
         paddingHorizontal: 12,
         marginBottom: 16,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: 270,
-        alignSelf: 'center',
+        width: '100%',
     },
     streakContent: {
         flexDirection: 'row',
@@ -372,10 +419,20 @@ const styles = StyleSheet.create({
     researchCard: {
         backgroundColor: '#FFFFFF',
         borderRadius: 8,
-        padding: 13,
+        width: '100%',
+        height: 80,
         marginBottom: 20,
-        width: 270,
-        alignSelf: 'center',
+    },
+    researchContent: {
+        flex: 1,
+        flexDirection: 'row',
+        padding: 13,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    researchTextContainer: {
+        flex: 1,
+        marginRight: 10,
     },
     researchTitle: {
         fontSize: 13,
@@ -391,10 +448,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontFamily: 'Prompt',
         color: '#949494',
-        marginBottom: 16,
-    },
-    toggleContainer: {
-        alignItems: 'flex-end',
+        width: 199,
     },
     toggle: {
         width: 30,
@@ -402,14 +456,22 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         backgroundColor: '#CAE0E7',
         justifyContent: 'center',
+        position: 'relative',
+    },
+    toggleActive: {
+        backgroundColor: '#CAE0E7',
     },
     toggleThumb: {
-        position: 'absolute',
-        left: 1,
         width: 12,
         height: 14,
         backgroundColor: '#FFFFFF',
         borderRadius: 5,
+        position: 'absolute',
+        left: 1,
+        top: 1,
+    },
+    toggleThumbActive: {
+        left: 17,
     },
 });
 

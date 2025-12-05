@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
-import BottomNavigation from '../components/BottomNavigation';
 import Logo from '../components/Logo';
 import BackButton from '../components/BackButton';
+import { theme } from '../theme/theme';
+import { commonStyles } from '../styles/common';
 
 const ProfileInformationScreen: React.FC = () => {
     const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
     const [focusedInput, setFocusedInput] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         nickname: 'nickname',
@@ -24,41 +27,26 @@ const ProfileInformationScreen: React.FC = () => {
         navigation.goBack();
     };
 
-    const handleTabPress = (tab: string) => {
-        if (tab === 'settings') {
-            navigation.navigate('Profile' as never);
-        } else if (tab === 'home') {
-            navigation.navigate('Dashboard' as never);
-        } else if (tab === 'notifications') {
-            navigation.navigate('DailyCheckin' as never);
-        } else if (tab === 'community') {
-            navigation.navigate('Profile' as never);
-        }
-    };
-
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
                 {/* Header */}
-                <View style={styles.header}>
+                <View style={[styles.header, { paddingTop: insets.top }]}>
                     <BackButton
                         onPress={() => navigation.goBack()}
                         size={17}
+                        style={StyleSheet.flatten([styles.backButton, { top: insets.top }])}
                     />
                     <View style={styles.headerCenter}>
-                        <Ionicons name="person-outline" size={15} color="#232323" />
                         <Text style={styles.headerTitle}>Profile Information</Text>
-                        <Logo size={13} tintColor="#FF01B4" />
+                        <Logo size={13} tintColor="#FF01B4" style={styles.asteriskLogo} />
                     </View>
                 </View>
 
                 {/* Form Fields */}
                 <View style={styles.formContainer}>
                     <View style={styles.inputGroup}>
-                        <Text style={[
-                            styles.label,
-                            focusedInput === 'nickname' && styles.labelFocused
-                        ]}>
+                        <Text style={styles.labelRequired}>
                             Nickname<Text style={styles.required}>*</Text>
                         </Text>
                         <TextInput
@@ -76,10 +64,7 @@ const ProfileInformationScreen: React.FC = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={[
-                            styles.label,
-                            focusedInput === 'ageRange' && styles.labelFocused
-                        ]}>
+                        <Text style={styles.labelRequired}>
                             Age Range<Text style={styles.required}>*</Text>
                         </Text>
                         <TextInput
@@ -97,22 +82,19 @@ const ProfileInformationScreen: React.FC = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>
+                        <Text style={styles.labelRequired}>
                             Ethnicity<Text style={styles.required}>*</Text>
                         </Text>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.ethnicity && styles.placeholder]}>
                                 {formData.ethnicity || 'Select your ethnicity'}
                             </Text>
-                            <Ionicons name="chevron-down" size={10} color="#949494" />
+                            <Ionicons name="chevron-down" size={12} color="#232323" />
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={[
-                            styles.label,
-                            focusedInput === 'location' && styles.labelFocused
-                        ]}>
+                        <Text style={styles.labelRequired}>
                             Location<Text style={styles.required}>*</Text>
                         </Text>
                         <TextInput
@@ -133,7 +115,7 @@ const ProfileInformationScreen: React.FC = () => {
                         <Text style={styles.label}>Pregnant (optional)</Text>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={styles.dropdownText}>{formData.pregnancy}</Text>
-                            <Ionicons name="chevron-down" size={10} color="#949494" />
+                            <Ionicons name="chevron-down" size={12} color="#232323" />
                         </TouchableOpacity>
                     </View>
 
@@ -143,7 +125,7 @@ const ProfileInformationScreen: React.FC = () => {
                             <Text style={[styles.dropdownText, !formData.caretaker && styles.placeholder]}>
                                 {formData.caretaker || 'Choose an option'}
                             </Text>
-                            <Ionicons name="chevron-down" size={10} color="#949494" />
+                            <Ionicons name="chevron-down" size={12} color="#232323" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -153,33 +135,34 @@ const ProfileInformationScreen: React.FC = () => {
                     <Button
                         title="Save"
                         onPress={handleSave}
+                        variant="primary"
                         style={styles.saveButton}
                         textStyle={styles.saveButtonText}
                     />
                 </View>
             </ScrollView>
-
-            <BottomNavigation activeTab="settings" onTabPress={handleTabPress} />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#F8F8F8',
+        ...commonStyles.container,
     },
     content: {
         flex: 1,
-        paddingHorizontal: 20,
-        alignItems: 'center',
+        paddingHorizontal: 25,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 16,
-        paddingTop: 44,
+        paddingBottom: theme.spacing.base,
+        position: 'relative',
         width: '100%',
+    },
+    backButton: {
+        position: 'absolute',
+        left: 0,
     },
     headerCenter: {
         flex: 1,
@@ -189,92 +172,78 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     headerTitle: {
-        fontSize: 15,
-        lineHeight: 16,
-        fontWeight: '500',
-        fontFamily: 'Prompt',
-        color: '#232323',
+        ...theme.typography.presets.h3,
+        color: theme.colors.textSecondary,
+        textAlign: 'center',
     },
-    asterisk: {
-        fontSize: 13,
-        color: '#FF01B4',
+    asteriskLogo: {
+        marginLeft: 2,
     },
     formContainer: {
-        marginTop: 20,
-        width: 260,
+        ...commonStyles.formContainer,
+        marginTop: theme.spacing.lg,
     },
     inputGroup: {
-        marginBottom: 16,
+        marginBottom: theme.spacing.lg,
     },
     label: {
-        fontSize: 10,
-        lineHeight: 15,
-        fontWeight: '400',
-        fontFamily: 'Prompt',
-        color: '#9C9C9C',
+        ...theme.typography.presets.label,
+        color: theme.colors.textPlaceholder,
+        marginBottom: 0,
+    },
+    labelRequired: {
+        ...theme.typography.presets.label,
+        color: theme.colors.ocean,
         marginBottom: 0,
     },
     labelFocused: {
-        color: '#61ABC5',
+        ...commonStyles.labelFocused,
     },
     required: {
-        color: '#FF01B4',
+        color: theme.colors.asteriskPink,
     },
     input: {
-        height: 30,
-        backgroundColor: '#FFFFFF',
-        borderWidth: 1,
-        borderColor: 'transparent',
-        borderRadius: 8,
-        paddingHorizontal: 13,
-        paddingVertical: 6,
-        fontSize: 12,
-        lineHeight: 18,
-        fontFamily: 'Prompt',
-        color: '#272727',
+        ...commonStyles.inputBase,
+        backgroundColor: theme.colors.white,
         marginTop: 0,
+        borderWidth: theme.spacing.borderWidth.thin,
+        borderColor: 'transparent',
     },
     inputFocused: {
-        borderColor: '#61ABC5',
+        ...commonStyles.inputFocused,
     },
     dropdown: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: 30,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 8,
-        paddingHorizontal: 13,
-        paddingVertical: 6,
+        height: theme.spacing.inputHeight,
+        backgroundColor: theme.colors.white,
+        borderRadius: theme.spacing.radius.base,
+        paddingHorizontal: theme.spacing.inputPaddingHorizontal,
+        paddingVertical: theme.spacing.inputPaddingVertical,
+        borderWidth: theme.spacing.borderWidth.thin,
+        borderColor: 'transparent',
     },
     dropdownText: {
-        fontSize: 12,
-        lineHeight: 18,
-        fontFamily: 'Prompt',
-        color: '#272727',
+        ...theme.typography.presets.body,
+        color: theme.colors.textSecondary,
+        flex: 1,
     },
     placeholder: {
-        color: '#949494',
+        color: theme.colors.textPlaceholder,
     },
     buttonContainer: {
-        marginTop: 20,
-        marginBottom: 40,
-        width: 260,
+        marginTop: theme.spacing.lg,
+        marginBottom: theme.spacing.formMarginBottom,
+        width: theme.spacing.buttonWidth,
+        alignSelf: 'center',
     },
     saveButton: {
-        width: 260,
-        height: 35,
-        backgroundColor: '#FF01B4',
-        borderRadius: 10,
-        paddingVertical: 0,
-        minHeight: 35,
+        ...commonStyles.buttonBase,
+        ...commonStyles.buttonPrimary,
     },
     saveButtonText: {
-        fontSize: 11,
-        lineHeight: 17,
-        fontWeight: '500',
-        fontFamily: 'Prompt',
-        color: '#FFFFFF',
+        ...commonStyles.buttonTextPrimary,
     },
 });
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/Header';
 import Button from '../components/Button';
@@ -29,7 +30,7 @@ const ProfileSetupScreen: React.FC = () => {
         if (currentStep < totalSteps) {
             setCurrentStep(currentStep + 1);
         } else {
-            navigation.navigate('Dashboard' as never);
+            navigation.navigate('MainContainer' as never);
         }
     };
 
@@ -249,7 +250,7 @@ const ProfileSetupScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <BackgroundPattern />
-            <View style={styles.headerContainer}>
+            <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
                 <BackButton
                     onPress={handleBack}
                     size={17}
@@ -289,8 +290,7 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     headerContainer: {
-        paddingTop: 44,
-        paddingHorizontal: 30,
+        paddingHorizontal: 35,
         flexDirection: 'row',
         alignItems: 'center',
     },
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        paddingHorizontal: 30,
+        paddingHorizontal: 35,
     },
     scrollContent: {
         paddingBottom: 40,
@@ -307,8 +307,7 @@ const styles = StyleSheet.create({
     stepContainer: {
         marginTop: 0,
         marginBottom: 40,
-        width: 260,
-        alignSelf: 'center',
+        width: '100%',
         justifyContent: 'center',
         minHeight: 400,
     },
@@ -346,7 +345,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     textInput: {
-        width: 260,
+        width: '100%',
         height: 40,
         backgroundColor: '#EFEFEF',
         borderRadius: 8,
@@ -358,11 +357,10 @@ const styles = StyleSheet.create({
         color: '#1B1B1B',
         position: 'absolute',
         top: 187,
-        alignSelf: 'center',
         borderWidth: 1,
     },
     textArea: {
-        width: 260,
+        width: '100%',
         height: 40,
         backgroundColor: '#EFEFEF',
         borderRadius: 8,
@@ -388,7 +386,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: 260,
+        width: '100%',
         height: 40,
         backgroundColor: '#EFEFEF',
         borderRadius: 8,

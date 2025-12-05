@@ -16,7 +16,7 @@ export const commonStyles = StyleSheet.create({
     // Header styles
     headerContainer: {
         paddingTop: theme.spacing.headerPaddingTop,
-        paddingHorizontal: theme.spacing.headerPaddingHorizontal,
+        paddingHorizontal: 25,
         flexDirection: 'row',
         alignItems: 'center',
     },
@@ -24,7 +24,7 @@ export const commonStyles = StyleSheet.create({
     // Content styles
     content: {
         flex: 1,
-        paddingHorizontal: theme.spacing.contentPaddingHorizontal,
+        paddingHorizontal: 25,
     },
 
     scrollContent: {
@@ -47,7 +47,7 @@ export const commonStyles = StyleSheet.create({
     },
 
     inputFocused: {
-        borderWidth: theme.spacing.borderWidth.none,
+        borderWidth: theme.spacing.borderWidth.thin,
         borderColor: theme.colors.ocean,
     },
 
@@ -57,7 +57,7 @@ export const commonStyles = StyleSheet.create({
 
     // Button styles
     buttonBase: {
-        width: 260,
+        width: '100%',
         height: theme.spacing.buttonHeight,
         borderRadius: theme.spacing.radius.md,
         alignItems: 'center',
@@ -136,8 +136,7 @@ export const commonStyles = StyleSheet.create({
 
     // Form styles
     formContainer: {
-        width: 260,
-        alignSelf: 'center',
+        width: '100%',
         marginBottom: theme.spacing.formMarginBottom,
     },
 

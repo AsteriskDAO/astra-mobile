@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useFixedHeaderHeight } from '../hooks/useFixedHeaderHeight';
 
 interface Message {
     id: string;
@@ -21,6 +22,7 @@ interface Message {
 
 const DailyCheckinScreen: React.FC = () => {
     const navigation = useNavigation();
+    const headerHeight = useFixedHeaderHeight();
     const [isInputFocused, setIsInputFocused] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -102,14 +104,11 @@ const DailyCheckinScreen: React.FC = () => {
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-            <View style={styles.header}>
-                <Text style={styles.title}>Daily Check-in</Text>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="close" size={24} color="#2196F3" />
-                </TouchableOpacity>
-            </View>
-
-            <ScrollView style={styles.messagesContainer} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+                style={[styles.messagesContainer, { paddingTop: headerHeight }]} 
+                showsVerticalScrollIndicator={false} 
+                contentContainerStyle={styles.scrollContent}
+            >
                 {messages.map(renderMessage)}
 
                 {isTyping && (
@@ -153,22 +152,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F5F5',
     },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        paddingTop: 60,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#333333',
-    },
     messagesContainer: {
         flex: 1,
         paddingHorizontal: 20,
+    },
+    scrollContent: {
+        paddingBottom: 20,
     },
     messageContainer: {
         flexDirection: 'row',

@@ -27,6 +27,7 @@ export const spacing = {
     headerPaddingHorizontal: 30,
     contentPaddingHorizontal: 30,
     contentPaddingBottom: 40,
+    // Note: Use useFixedHeaderHeight() hook instead of fixedHeaderHeight for dynamic safe area support
 
     // Screen specific
     titleMarginTop: 96,

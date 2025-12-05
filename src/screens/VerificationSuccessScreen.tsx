@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: theme.spacing.xl,
+        paddingHorizontal: 35,
     },
     textContainer: {
         alignItems: 'center',

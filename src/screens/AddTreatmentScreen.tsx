@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Modal 
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
-import BottomNavigation from '../components/BottomNavigation';
 
 const AddTreatmentScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -61,10 +60,6 @@ const AddTreatmentScreen: React.FC = () => {
     const handleDelete = () => {
         // Handle delete logic
         navigation.goBack();
-    };
-
-    const handleTabPress = (tab: string) => {
-        console.log('Tab pressed:', tab);
     };
 
     return (
@@ -217,8 +212,6 @@ const AddTreatmentScreen: React.FC = () => {
                     </View>
                 </View>
             </Modal>
-
-            <BottomNavigation activeTab="settings" onTabPress={handleTabPress} />
         </View>
     );
 };
@@ -230,7 +223,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        paddingHorizontal: 20,
+        paddingHorizontal: 25,
     },
     header: {
         flexDirection: 'row',

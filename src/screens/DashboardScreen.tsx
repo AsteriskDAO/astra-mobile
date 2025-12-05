@@ -2,27 +2,17 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import BottomNavigation from '../components/BottomNavigation';
 import Button from '../components/Button';
-import Logo from '../components/Logo';
+import { theme } from '../theme/theme';
+import { useFixedHeaderHeight } from '../hooks/useFixedHeaderHeight';
 
 const DashboardScreen: React.FC = () => {
     const navigation = useNavigation();
-
-    const handleTabPress = (tab: string) => {
-        if (tab === 'home') {
-            // Already on home
-        } else if (tab === 'community') {
-            navigation.navigate('Profile' as never);
-        } else if (tab === 'notifications') {
-            navigation.navigate('DailyCheckin' as never);
-        } else if (tab === 'settings') {
-            navigation.navigate('Profile' as never);
-        }
-    };
+    const headerHeight = useFixedHeaderHeight();
 
     const handleStartCheckin = () => {
-        navigation.navigate('DailyCheckin' as never);
+        // DailyCheckin is now part of MainContainer, handled by tab switching
+        // If you need to open chat, it should switch to chat tab
     };
 
     const days = [
@@ -37,19 +27,11 @@ const DashboardScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Top Bar */}
-                <View style={styles.topBar}>
-                    <View style={styles.streakIndicator}>
-                        <Ionicons name="flame" size={20} color="#232323" />
-                        <Text style={styles.streakNumber}>3</Text>
-                    </View>
-                    <View style={styles.greetingContainer}>
-                        <Text style={styles.greeting}>Good morning!</Text>
-                        <Logo size={16} tintColor="#FF01B4" />
-                    </View>
-                    <Ionicons name="person-outline" size={24} color="#232323" />
-                </View>
+            <ScrollView
+                style={[styles.content, { paddingTop: headerHeight }]}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
 
                 {/* Date Selector */}
                 <View style={styles.dateSelector}>
@@ -136,8 +118,6 @@ const DashboardScreen: React.FC = () => {
                     <Ionicons name="chevron-forward" size={20} color="#949494" />
                 </TouchableOpacity>
             </ScrollView>
-
-            <BottomNavigation activeTab="home" onTabPress={handleTabPress} />
         </View>
     );
 };
@@ -151,28 +131,8 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
     },
-    topBar: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingTop: 60,
+    scrollContent: {
         paddingBottom: 20,
-    },
-    streakIndicator: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    streakNumber: {
-        fontFamily: 'Prompt',
-        fontSize: 15,
-        fontWeight: '500',
-        color: '#232323',
-    },
-    greetingContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
     },
     greeting: {
         fontFamily: 'Prompt',

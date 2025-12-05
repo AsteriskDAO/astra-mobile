@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: theme.spacing.xl,
+        paddingHorizontal: 35,
         paddingTop: theme.spacing.spacing0,
         paddingBottom: theme.spacing.formMarginBottom,
     },
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         width: theme.spacing.spacing242,
     },
     buttonContainer: {
-        width: theme.spacing.buttonWidth,
+        width: '100%',
         gap: theme.spacing.base,
     },
     primaryButton: {

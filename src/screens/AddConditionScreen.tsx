@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Modal 
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
-import BottomNavigation from '../components/BottomNavigation';
 
 const AddConditionScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -54,10 +53,6 @@ const AddConditionScreen: React.FC = () => {
     const handleSave = () => {
         // Handle save logic
         navigation.goBack();
-    };
-
-    const handleTabPress = (tab: string) => {
-        console.log('Tab pressed:', tab);
     };
 
     return (
@@ -191,8 +186,6 @@ const AddConditionScreen: React.FC = () => {
                     </View>
                 </View>
             </Modal>
-
-            <BottomNavigation activeTab="settings" onTabPress={handleTabPress} />
         </View>
     );
 };
@@ -204,7 +197,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        paddingHorizontal: 20,
+        paddingHorizontal: 25,
     },
     header: {
         flexDirection: 'row',

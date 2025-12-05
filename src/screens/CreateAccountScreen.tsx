@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import BackgroundPattern from '../components/BackgroundPattern';
 import BackButton from '../components/BackButton';
 import { theme } from '../theme/theme';
 import { commonStyles } from '../styles/common';
+import { LAYOUT } from '../constants/layout';
 
 const CreateAccountScreen: React.FC = () => {
     const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
     const [formData, setFormData] = useState({
         email: 'email@asteriskdao.xyz',
         password: '*****',
@@ -24,7 +27,7 @@ const CreateAccountScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <BackgroundPattern />
-            <View style={styles.headerContainer}>
+            <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
                 <BackButton
                     onPress={() => navigation.goBack()}
                     size={17}
@@ -132,30 +135,33 @@ const styles = StyleSheet.create({
         ...commonStyles.container,
     },
     headerContainer: {
-        ...commonStyles.headerContainer,
+        paddingHorizontal: LAYOUT.AUTH_CONTENT_PADDING_HORIZONTAL,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     backButton: {
         marginRight: theme.spacing.md,
     },
     content: {
-        ...commonStyles.content,
+        flex: 1,
+        paddingHorizontal: LAYOUT.AUTH_CONTENT_PADDING_HORIZONTAL,
     },
     scrollContent: {
         ...commonStyles.scrollContent,
     },
     titleContainer: {
         alignItems: 'center',
-        marginTop: theme.spacing['5xl'],
+        marginTop: LAYOUT.SIGNUP_TITLE_TOP_PADDING,
         marginBottom: theme.spacing.formMarginBottom,
     },
     title: {
         ...commonStyles.title,
-        width: 260,
+        width: '100%',
         marginBottom: theme.spacing.sm,
     },
     subtitle: {
         ...commonStyles.subtitle,
-        width: 243,
+        width: '100%',
     },
     formContainer: {
         ...commonStyles.formContainer,

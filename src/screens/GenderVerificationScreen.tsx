@@ -1,21 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import BackgroundPattern from '../components/BackgroundPattern';
 
 const GenderVerificationScreen: React.FC = () => {
     const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
 
     return (
         <View style={styles.container}>
             <BackgroundPattern />
-            <Header
-                onBack={() => navigation.goBack()}
-                currentStep={1}
-                totalSteps={3}
-            />
+            <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
+                <Header
+                    onBack={() => navigation.goBack()}
+                    currentStep={1}
+                    totalSteps={3}
+                />
+            </View>
 
             <View style={styles.content}>
                 <View style={styles.iconContainer}>
@@ -39,11 +43,16 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F5F5',
     },
+    headerContainer: {
+        paddingHorizontal: 35,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     content: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 40,
+        paddingHorizontal: 35,
     },
     iconContainer: {
         marginBottom: 40,
