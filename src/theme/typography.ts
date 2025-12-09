@@ -36,7 +36,7 @@ export const typography = {
             fontFamily: 'Prompt',
             fontSize: 30,
             lineHeight: 31,
-            fontWeight: '400',
+            fontWeight: '500',
         },
         h2: {
             fontFamily: 'Prompt',

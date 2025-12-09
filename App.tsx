@@ -7,35 +7,46 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import PersistentBottomNav from './src/components/PersistentBottomNav';
 import { TabProvider } from './src/contexts/TabContext';
 
-// Import screens
-import SplashScreen from './src/screens/SplashScreen';
-import WelcomeScreen from './src/screens/WelcomeScreen';
-import GenderVerificationScreen from './src/screens/GenderVerificationScreen';
-import IDVerificationScreen from './src/screens/IDVerificationScreen';
-import VerificationSuccessScreen from './src/screens/VerificationSuccessScreen';
-import VerificationFailedScreen from './src/screens/VerificationFailedScreen';
-import CreateAccountScreen from './src/screens/CreateAccountScreen';
-import LoginScreen from './src/screens/LoginScreen';
-import TelegramLoginScreen from './src/screens/TelegramLoginScreen';
-import ProfileSetupScreen from './src/screens/ProfileSetupScreen';
-import MainContainerScreen from './src/screens/MainContainerScreen';
+// Import screens - Auth
+import SplashScreen from './src/screens/auth/SplashScreen';
+import WelcomeScreen from './src/screens/auth/WelcomeScreen';
+import LoginScreen from './src/screens/auth/LoginScreen';
+import CreateAccountScreen from './src/screens/auth/CreateAccountScreen';
+import TelegramLoginScreen from './src/screens/auth/TelegramLoginScreen';
 
-// Sub-screens (pushed on top of MainContainer)
-import ProfileScreen from './src/screens/ProfileScreen';
-import ProfileInformationScreen from './src/screens/ProfileInformationScreen';
-import ConditionsScreen from './src/screens/ConditionsScreen';
-import AddConditionScreen from './src/screens/AddConditionScreen';
-import MedicationsScreen from './src/screens/MedicationsScreen';
-import AddMedicationScreen from './src/screens/AddMedicationScreen';
-import TreatmentsScreen from './src/screens/TreatmentsScreen';
-import AddTreatmentScreen from './src/screens/AddTreatmentScreen';
-import DayStreakScreen from './src/screens/DayStreakScreen';
-import VotingScreen from './src/screens/VotingScreen';
-import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
-import EditEmailScreen from './src/screens/EditEmailScreen';
-import NotificationsSettingsScreen from './src/screens/NotificationsSettingsScreen';
-import AppFeedbackScreen from './src/screens/AppFeedbackScreen';
-import ResearchInviteScreen from './src/screens/ResearchInviteScreen';
+// Verification
+import GenderVerificationScreen from './src/screens/verification/GenderVerificationScreen';
+import IDVerificationScreen from './src/screens/verification/IDVerificationScreen';
+import VerificationSuccessScreen from './src/screens/verification/VerificationSuccessScreen';
+import VerificationFailedScreen from './src/screens/verification/VerificationFailedScreen';
+
+// Profile
+import ProfileSetupScreen from './src/screens/profile/ProfileSetupScreen';
+import ProfileScreen from './src/screens/profile/ProfileScreen';
+import ProfileInformationScreen from './src/screens/profile/ProfileInformationScreen';
+import DayStreakScreen from './src/screens/profile/DayStreakScreen';
+
+// Health
+import ConditionsScreen from './src/screens/health/ConditionsScreen';
+import AddConditionScreen from './src/screens/health/AddConditionScreen';
+import MedicationsScreen from './src/screens/health/MedicationsScreen';
+import AddMedicationScreen from './src/screens/health/AddMedicationScreen';
+import TreatmentsScreen from './src/screens/health/TreatmentsScreen';
+import AddTreatmentScreen from './src/screens/health/AddTreatmentScreen';
+
+// Settings
+import SettingsScreen from './src/screens/settings/SettingsScreen';
+import ChangePasswordScreen from './src/screens/settings/ChangePasswordScreen';
+import EditEmailScreen from './src/screens/settings/EditEmailScreen';
+import NotificationsSettingsScreen from './src/screens/settings/NotificationsSettingsScreen';
+import AppFeedbackScreen from './src/screens/settings/AppFeedbackScreen';
+
+// Main
+import MainContainerScreen from './src/screens/main/MainContainerScreen';
+
+// Other
+import VotingScreen from './src/screens/other/VotingScreen';
+import ResearchInviteScreen from './src/screens/other/ResearchInviteScreen';
 
 const Stack = createStackNavigator();
 

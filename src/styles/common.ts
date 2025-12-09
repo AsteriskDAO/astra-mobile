@@ -31,40 +31,6 @@ export const commonStyles = StyleSheet.create({
         paddingBottom: theme.spacing.contentPaddingBottom,
     },
 
-    // Input styles
-    inputBase: {
-        height: theme.spacing.inputHeight,
-        backgroundColor: theme.colors.inputBackground,
-        borderRadius: theme.spacing.radius.base,
-        paddingHorizontal: theme.spacing.inputPaddingHorizontal,
-        paddingVertical: theme.spacing.inputPaddingVertical,
-        fontSize: theme.typography.fontSize.md,
-        lineHeight: theme.typography.lineHeight.large,
-        fontFamily: theme.typography.fontFamily.prompt,
-        color: theme.colors.textSecondary,
-        borderWidth: theme.spacing.borderWidth.none,
-        borderColor: 'transparent', // Default: transparent border
-    },
-
-    inputFocused: {
-        borderWidth: theme.spacing.borderWidth.thin,
-        borderColor: theme.colors.ocean,
-    },
-
-    inputUnfocused: {
-        borderColor: 'transparent',
-    },
-
- 
-    buttonTextPrimary: {
-        ...theme.typography.presets.button,
-        color: theme.colors.buttonPrimaryText,
-    },
-
-    buttonTextSecondary: {
-        ...theme.typography.presets.button,
-        color: theme.colors.buttonSecondaryText,
-    },
 
     // Text styles
     title: {
