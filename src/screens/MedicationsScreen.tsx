@@ -3,17 +3,9 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
-
-interface Medication {
-    id: string;
-    name: string;
-    startDate: string;
-    type: string;
-    status: string;
-    dosage: string;
-    frequency: string;
-    notes: string;
-}
+import SecondaryHeader from '../components/SecondaryHeader';
+import { Medication } from '../types/health';
+import { theme } from '../theme/theme';
 
 const MedicationsScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -37,7 +29,7 @@ const MedicationsScreen: React.FC = () => {
     };
 
     const handleEditMedication = (medication: Medication) => {
-        navigation.navigate('AddMedicationScreen' as never, { medication });
+        navigation.navigate('AddMedicationScreen', { medication });
     };
 
     const handleDeleteMedication = (medication: Medication) => {
@@ -60,17 +52,15 @@ const MedicationsScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Ionicons name="chevron-back" size={24} color="#2196F3" />
-                    </TouchableOpacity>
-                    <View style={styles.headerCenter}>
-                        <Ionicons name="medical-outline" size={20} color="#333333" />
-                        <Text style={styles.headerTitle}>Medications</Text>
-                    </View>
-                    <Text style={styles.asterisk}>*</Text>
-                </View>
+                <SecondaryHeader
+                    title="Medications"
+                    onBack={() => navigation.goBack()}
+                    icon={{
+                        name: 'medical-outline',
+                        size: 20,
+                        color: '#333333',
+                    }}
+                />
 
                 {/* Medications List */}
                 <View style={styles.medicationsContainer}>
@@ -116,10 +106,17 @@ const MedicationsScreen: React.FC = () => {
                         </View>
                     ))}
 
-                    <TouchableOpacity style={styles.addButton} onPress={handleAddMedication}>
-                        <Ionicons name="add" size={20} color="#E91E63" />
-                        <Text style={styles.addButtonText}>Add another medication</Text>
-                    </TouchableOpacity>
+                    <Button
+                        variant="outline"
+                        title="Add another medication"
+                        icon={{
+                            name: 'add',
+                            size: 20,
+                            color: theme.colors.asteriskPink,
+                        }}
+                        onPress={handleAddMedication}
+                        style={styles.addButton}
+                    />
                 </View>
 
                 {/* Save Button */}
@@ -174,28 +171,6 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 25,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 16,
-        paddingTop: 60,
-    },
-    headerCenter: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginLeft: 16,
-    },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333333',
-        marginLeft: 8,
-    },
-    asterisk: {
-        fontSize: 18,
-        color: '#E91E63',
-    },
     medicationsContainer: {
         marginTop: 20,
     },
@@ -224,7 +199,7 @@ const styles = StyleSheet.create({
     editButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 8,
@@ -252,27 +227,14 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     addButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'white',
-        borderWidth: 1,
-        borderColor: '#E91E63',
-        borderRadius: 12,
-        padding: 16,
         marginBottom: 20,
-    },
-    addButtonText: {
-        color: '#E91E63',
-        fontSize: 16,
-        fontWeight: '600',
-        marginLeft: 8,
+        borderColor: theme.colors.asteriskPink,
     },
     buttonContainer: {
         marginBottom: 40,
     },
     saveButton: {
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
     },
     modalOverlay: {
         flex: 1,
@@ -306,11 +268,11 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     deleteConfirmButton: {
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
     },
     cancelButton: {
         backgroundColor: 'white',
-        borderColor: '#E91E63',
+        borderColor: theme.colors.asteriskPink,
         borderWidth: 1,
     },
 });

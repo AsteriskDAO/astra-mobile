@@ -29,6 +29,8 @@ export const colors = {
     buttonPrimaryText: '#FFFFFF',
     buttonSecondary: '#F8F8F8',
     buttonSecondaryText: '#FF01B4',
+    buttonDisabled: '#C6C6C6',
+    buttonDisabledText: '#FFFFFF',
 
     // Status Colors (currently unused, but kept for future use)
     // success: '#4CAF50',

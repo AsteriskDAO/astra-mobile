@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Modal } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
+import Input from '../components/Input';
+import Label from '../components/Label';
+import SecondaryHeader from '../components/SecondaryHeader';
+import { RootStackParamList } from '../types/navigation';
+import { Condition } from '../types/health';
+import { theme } from '../theme/theme';
+
+type AddConditionScreenRouteProp = RouteProp<RootStackParamList, 'AddConditionScreen'>;
 
 const AddConditionScreen: React.FC = () => {
     const navigation = useNavigation();
-    const route = useRoute();
-    const [focusedInput, setFocusedInput] = useState<string | null>(null);
+    const route = useRoute<AddConditionScreenRouteProp>();
     const [formData, setFormData] = useState({
         conditionName: '',
         dateDiagnosed: '',
@@ -58,44 +65,27 @@ const AddConditionScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={handleBack}>
-                        <Ionicons name="chevron-back" size={24} color="#999999" />
-                    </TouchableOpacity>
-                    <View style={styles.headerCenter}>
-                        <Ionicons name="medical-outline" size={20} color="#999999" />
-                        <Text style={styles.headerTitle}>
-                            {isEdit ? 'Edit condition' : 'Add new condition'}
-                        </Text>
-                    </View>
-                    <Text style={styles.asterisk}>*</Text>
-                </View>
+                <SecondaryHeader
+                    title={isEdit ? 'Edit condition' : 'Add new condition'}
+                    onBack={handleBack}
+                    icon={{
+                        name: 'medical-outline',
+                        size: 20,
+                        color: '#999999',
+                    }}
+                />
 
                 {/* Form Fields */}
                 <View style={styles.formContainer}>
-                    <View style={styles.inputGroup}>
-                        <Text style={[
-                            styles.label,
-                            focusedInput === 'conditionName' && styles.labelFocused
-                        ]}>
-                            Condition Name
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                focusedInput === 'conditionName' && styles.inputFocused
-                            ]}
-                            value={formData.conditionName}
-                            onChangeText={(text) => handleInputChange('conditionName', text)}
-                            placeholder="Start typing"
-                            onFocus={() => setFocusedInput('conditionName')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                    </View>
+                    <Input
+                        label="Condition Name"
+                        value={formData.conditionName}
+                        onChangeText={(text) => handleInputChange('conditionName', text)}
+                        placeholder="Start typing"
+                    />
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Date Diagnosed</Text>
+                        <Label>Date Diagnosed</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.dateDiagnosed && styles.placeholder]}>
                                 {formData.dateDiagnosed || 'Select Date'}
@@ -105,7 +95,7 @@ const AddConditionScreen: React.FC = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Type</Text>
+                        <Label>Type</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.type && styles.placeholder]}>
                                 {formData.type || 'Select Type'}
@@ -115,7 +105,7 @@ const AddConditionScreen: React.FC = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Status</Text>
+                        <Label>Status</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.status && styles.placeholder]}>
                                 {formData.status || 'Select Status'}
@@ -124,27 +114,14 @@ const AddConditionScreen: React.FC = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={styles.inputGroup}>
-                        <Text style={[
-                            styles.label,
-                            focusedInput === 'notes' && styles.labelFocused
-                        ]}>
-                            Notes
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.textArea,
-                                focusedInput === 'notes' && styles.inputFocused
-                            ]}
-                            value={formData.notes}
-                            onChangeText={(text) => handleInputChange('notes', text)}
-                            placeholder="You can write anything relevant to your condition here"
-                            multiline
-                            numberOfLines={4}
-                            onFocus={() => setFocusedInput('notes')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                    </View>
+                    <Input
+                        label="Notes"
+                        value={formData.notes}
+                        onChangeText={(text) => handleInputChange('notes', text)}
+                        placeholder="You can write anything relevant to your condition here"
+                        multiline
+                        numberOfLines={4}
+                    />
                 </View>
 
                 {/* Save Button */}
@@ -199,55 +176,11 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 25,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 16,
-        paddingTop: 60,
-    },
-    headerCenter: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginLeft: 16,
-    },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#999999',
-        marginLeft: 8,
-    },
-    asterisk: {
-        fontSize: 18,
-        color: '#E91E63',
-    },
     formContainer: {
         marginTop: 20,
     },
     inputGroup: {
         marginBottom: 20,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#9C9C9C',
-        marginBottom: 8,
-    },
-    labelFocused: {
-        color: '#61ABC5',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: 'transparent',
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        fontSize: 16,
-        backgroundColor: 'white',
-        color: '#333333',
-    },
-    inputFocused: {
-        borderColor: '#61ABC5',
     },
     dropdown: {
         flexDirection: 'row',
@@ -262,29 +195,19 @@ const styles = StyleSheet.create({
     },
     dropdownText: {
         fontSize: 16,
-        color: '#333333',
+        fontWeight: '400',
+        color: '#272727',
+        fontFamily: theme.typography.fontFamily.prompt,
     },
     placeholder: {
         color: '#999999',
-    },
-    textArea: {
-        borderWidth: 1,
-        borderColor: 'transparent',
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        fontSize: 16,
-        backgroundColor: 'white',
-        color: '#333333',
-        height: 100,
-        textAlignVertical: 'top',
     },
     buttonContainer: {
         marginTop: 20,
         marginBottom: 40,
     },
     saveButton: {
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
     },
     modalOverlay: {
         flex: 1,
@@ -318,11 +241,11 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     discardButton: {
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
     },
     cancelButton: {
         backgroundColor: 'white',
-        borderColor: '#E91E63',
+        borderColor: theme.colors.asteriskPink,
         borderWidth: 1,
     },
 });

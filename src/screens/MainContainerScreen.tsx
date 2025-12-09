@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import DashboardScreen from './DashboardScreen';
 import CommunityScreen from './CommunityScreen';
 import DailyCheckinScreen from './DailyCheckinScreen';
+import NotificationsScreen from './NotificationsScreen';
 import SettingsScreen from './SettingsScreen';
 import FixedHeader from '../components/FixedHeader';
 import { useTab } from '../contexts/TabContext';
@@ -20,7 +21,7 @@ const MainContainerScreen: React.FC = () => {
             case 'chat':
                 return <DailyCheckinScreen />;
             case 'notifications':
-                return <DailyCheckinScreen />; // Same as chat for now
+                return <NotificationsScreen />;
             case 'settings':
                 return <SettingsScreen />;
             default:

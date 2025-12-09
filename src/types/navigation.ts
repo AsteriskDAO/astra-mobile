@@ -1,6 +1,7 @@
 /**
  * Navigation types for React Navigation
  */
+import { Condition, Medication, Treatment } from './health';
 
 export type RootStackParamList = {
     Splash: undefined;
@@ -17,22 +18,23 @@ export type RootStackParamList = {
     Profile: undefined;
     ProfileInformation: undefined;
     ConditionsScreen: undefined;
-    AddConditionScreen: undefined;
+    AddConditionScreen: { condition?: Condition };
     MedicationsScreen: undefined;
-    AddMedicationScreen: undefined;
+    AddMedicationScreen: { medication?: Medication };
     TreatmentsScreen: undefined;
-    AddTreatmentScreen: undefined;
+    AddTreatmentScreen: { treatment?: Treatment };
     DayStreakScreen: undefined;
     VotingScreen: { pollId?: string; pollTitle?: string };
     ChangePassword: undefined;
     EditEmail: undefined;
     NotificationsSettings: undefined;
     AppFeedback: undefined;
+    ResearchInvite: undefined;
 };
 
 declare global {
     namespace ReactNavigation {
-        interface RootParamList extends RootStackParamList {}
+        interface RootParamList extends RootStackParamList { }
     }
 }
 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '../components/Header';
 import Button from '../components/Button';
+import Input from '../components/Input';
 import BackgroundPattern from '../components/BackgroundPattern';
 import BackButton from '../components/BackButton';
 import { theme } from '../theme/theme';
@@ -18,7 +19,6 @@ const CreateAccountScreen: React.FC = () => {
         password: '*****',
         confirmPassword: '*****',
     });
-    const [focusedInput, setFocusedInput] = useState<string | null>(null);
 
     const handleNext = () => {
         navigation.navigate('IDVerification' as never);
@@ -50,70 +50,33 @@ const CreateAccountScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.formContainer}>
-                    <View style={styles.inputWrapper}>
-                        <Text style={[
-                            styles.emailLabel,
-                            focusedInput === 'email' ? styles.labelFocused : styles.labelUnfocused
-                        ]}>
-                            Email
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.emailInput,
-                                focusedInput === 'email' ? styles.inputFocused : styles.inputUnfocused
-                            ]}
+                    <Input
+                        label="Email"
+                        placeholder="email@asteriskdao.xyz"
                             value={formData.email}
                             onChangeText={(text) => setFormData({ ...formData, email: text })}
-                            placeholder="email@asteriskdao.xyz"
-                            placeholderTextColor={theme.colors.textSecondary}
-                            onFocus={() => setFocusedInput('email')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                    </View>
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        style={styles.input}
+                    />
 
-                    <View style={styles.inputWrapper}>
-                        <Text style={[
-                            styles.passwordLabel,
-                            focusedInput === 'password' ? styles.labelFocused : styles.labelUnfocused
-                        ]}>
-                            Password
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.passwordInput,
-                                focusedInput === 'password' ? styles.inputFocused : styles.inputUnfocused
-                            ]}
+                    <Input
+                        label="Password"
+                        placeholder="*****"
                             value={formData.password}
                             onChangeText={(text) => setFormData({ ...formData, password: text })}
                             secureTextEntry
-                            placeholder="*****"
-                            placeholderTextColor={theme.colors.textSecondary}
-                            onFocus={() => setFocusedInput('password')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                    </View>
+                        style={styles.input}
+                    />
 
-                    <View style={styles.inputWrapper}>
-                        <Text style={[
-                            styles.passwordLabel,
-                            focusedInput === 'confirmPassword' ? styles.labelFocused : styles.labelUnfocused
-                        ]}>
-                            Confirm Password
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.passwordInput,
-                                focusedInput === 'confirmPassword' ? styles.inputFocused : styles.inputUnfocused
-                            ]}
+                    <Input
+                        label="Confirm Password"
+                        placeholder="*****"
                             value={formData.confirmPassword}
                             onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
                             secureTextEntry
-                            placeholder="*****"
-                            placeholderTextColor={theme.colors.textSecondary}
-                            onFocus={() => setFocusedInput('confirmPassword')}
-                            onBlur={() => setFocusedInput(null)}
+                        style={styles.input}
                         />
-                    </View>
                 </View>
 
                 <View style={styles.buttonContainer}>
@@ -121,8 +84,6 @@ const CreateAccountScreen: React.FC = () => {
                         title="Next"
                         onPress={handleNext}
                         variant="outline"
-                        style={styles.nextButton}
-                        textStyle={styles.nextButtonText}
                     />
                 </View>
             </ScrollView>
@@ -166,47 +127,12 @@ const styles = StyleSheet.create({
     formContainer: {
         ...commonStyles.formContainer,
     },
-    inputWrapper: {
-        ...commonStyles.inputWrapper,
-    },
-    emailLabel: {
-        ...commonStyles.label,
-        marginBottom: 0,
-    },
-    labelFocused: {
-        ...commonStyles.labelFocused,
-    },
-    labelUnfocused: {
-        ...commonStyles.label,
-    },
-    emailInput: {
-        ...commonStyles.inputBase,
-        marginTop: 0,
-    },
-    inputFocused: {
-        ...commonStyles.inputFocused,
-    },
-    inputUnfocused: {
-        ...commonStyles.inputUnfocused,
-    },
-    passwordLabel: {
-        ...commonStyles.label,
-        marginBottom: 0,
-    },
-    passwordInput: {
-        ...commonStyles.inputBase,
-        marginTop: 0,
+    input: {
+        marginBottom: theme.spacing.lg,
     },
     buttonContainer: {
         ...commonStyles.formContainer,
         marginTop: 0,
-    },
-    nextButton: {
-        ...commonStyles.buttonBase,
-        ...commonStyles.buttonOutline,
-    },
-    nextButtonText: {
-        ...commonStyles.buttonTextSecondary,
     },
 });
 

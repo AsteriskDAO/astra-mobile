@@ -44,7 +44,7 @@ const FixedHeader: React.FC = () => {
         <View style={[styles.container, { paddingTop: insets.top }]}>
             {/* Left: Streak indicator */}
             <View style={styles.leftSection}>
-                <Ionicons name="flame" size={20} color={theme.colors.textPrimary} />
+                <Ionicons name="flame" size={20} color={theme.colors.asteriskPink} />
                 <Text style={styles.streakNumber}>{streakCount}</Text>
             </View>
 

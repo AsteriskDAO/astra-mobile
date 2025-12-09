@@ -1,14 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import SecondaryHeader from '../components/SecondaryHeader';
 import Logo from '../components/Logo';
-import BackButton from '../components/BackButton';
 
 const DayStreakScreen: React.FC = () => {
     const navigation = useNavigation();
-    const insets = useSafeAreaInsets();
 
     const currentStreak = 3;
     const weekDays = [
@@ -23,19 +21,21 @@ const DayStreakScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={[styles.header, { paddingTop: insets.top }]}>
-                    <BackButton
-                        onPress={() => navigation.goBack()}
-                        size={17}
-                    />
-                    <View style={styles.headerCenter}>
-                        <Ionicons name="flame" size={15} color="#FF01B4" />
-                        <Text style={styles.headerTitle}>Day Streak</Text>
-                        <Logo size={13} tintColor="#FF01B4" />
-                    </View>
-                </View>
+            <ScrollView
+                style={styles.content}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
+                <SecondaryHeader
+                    title="Day Streak"
+                    onBack={() => navigation.goBack()}
+                    icon={{
+                        name: 'flame',
+                        size: 15,
+                        color: '#FF01B4',
+                    }}
+                    rightElement={<Logo size={13} tintColor="#FF01B4" />}
+                />
 
                 {/* Streak Display */}
                 <View style={styles.streakContainer}>
@@ -103,27 +103,9 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         paddingHorizontal: 25,
-        alignItems: 'center',
     },
-    header: {
-        flexDirection: 'row',
+    scrollContent: {
         alignItems: 'center',
-        paddingBottom: 16,
-        width: '100%',
-    },
-    headerCenter: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
-    },
-    headerTitle: {
-        fontSize: 15,
-        lineHeight: 16,
-        fontWeight: '500',
-        fontFamily: 'Prompt',
-        color: '#232323',
     },
     asterisk: {
         fontSize: 13,

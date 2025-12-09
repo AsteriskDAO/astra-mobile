@@ -33,7 +33,7 @@ const LoginScreen: React.FC = () => {
             <BackButton
                 onPress={() => navigation.goBack()}
                 size={17}
-                style={[styles.backButton, { top: insets.top }]}
+                style={[styles.backButton,{ top: insets.top }]}
             />
 
             <ScrollView
@@ -64,16 +64,12 @@ const LoginScreen: React.FC = () => {
                     <Button
                         title="Log in"
                         onPress={handleLogin}
-                        style={styles.loginButton}
-                        textStyle={styles.loginButtonText}
                     />
 
                     <Button
                         title="Import my telegram profile"
                         onPress={handleTelegramLogin}
                         variant="outline"
-                        style={styles.telegramButton}
-                        textStyle={styles.telegramButtonText}
                     />
                 </View>
             </ScrollView>
@@ -117,21 +113,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: '100%',
         gap: theme.spacing.base,
-    },
-    loginButton: {
-        ...commonStyles.buttonBase,
-        ...commonStyles.buttonPrimary,
-    },
-    loginButtonText: {
-        ...commonStyles.buttonTextPrimary,
-    },
-    telegramButton: {
-        ...commonStyles.buttonBase,
-        ...commonStyles.buttonOutline,
-    },
-    telegramButtonText: {
-        ...commonStyles.buttonTextSecondary,
-    },
+    }
 });
 
 export default LoginScreen;

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/Header';
 import Button from '../components/Button';
+import Input from '../components/Input';
 import BackgroundPattern from '../components/BackgroundPattern';
 import BackButton from '../components/BackButton';
 
@@ -22,7 +23,6 @@ const ProfileSetupScreen: React.FC = () => {
         caretaker: 'Kids',
         trialsParticipation: false,
     });
-    const [focusedInput, setFocusedInput] = useState<string | null>(null);
 
     const totalSteps = 9;
 
@@ -52,17 +52,11 @@ const ProfileSetupScreen: React.FC = () => {
                 return (
                     <View style={styles.stepContainer}>
                         <Text style={styles.questionSingle}>What would you like Astra to call you?</Text>
-                        <TextInput
-                            style={[
-                                styles.textInput,
-                                focusedInput === 'name' ? styles.inputFocused : styles.inputUnfocused
-                            ]}
+                        <Input
                             placeholder="type"
-                            placeholderTextColor="#9C9C9C"
                             value={profileData.name}
                             onChangeText={(text) => setProfileData({ ...profileData, name: text })}
-                            onFocus={() => setFocusedInput('name')}
-                            onBlur={() => setFocusedInput(null)}
+                            style={styles.inputPosition}
                         />
                     </View>
                 );
@@ -109,19 +103,12 @@ const ProfileSetupScreen: React.FC = () => {
                                 Include both clinically diagnosed and self-identified conditions. This helps us personalise your experience.
                             </Text>
                         </View>
-                        <TextInput
-                            style={[
-                                styles.textArea,
-                                focusedInput === 'healthConditions' ? styles.inputFocused : styles.inputUnfocused
-                            ]}
+                        <Input
                             placeholder="Start typing"
-                            placeholderTextColor="#9C9C9C"
                             value={profileData.healthConditions}
                             onChangeText={(text) => setProfileData({ ...profileData, healthConditions: text })}
                             multiline
                             numberOfLines={3}
-                            onFocus={() => setFocusedInput('healthConditions')}
-                            onBlur={() => setFocusedInput(null)}
                         />
                         <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
                             <Text style={styles.skipText}>Skip for now</Text>
@@ -138,19 +125,12 @@ const ProfileSetupScreen: React.FC = () => {
                                 Start typing and we'll suggest categories (e.g. pain relief, hormonal, mental health
                             </Text>
                         </View>
-                        <TextInput
-                            style={[
-                                styles.textArea,
-                                focusedInput === 'medications' ? styles.inputFocused : styles.inputUnfocused
-                            ]}
+                        <Input
                             placeholder="Start typing"
-                            placeholderTextColor="#9C9C9C"
                             value={profileData.medications}
                             onChangeText={(text) => setProfileData({ ...profileData, medications: text })}
                             multiline
                             numberOfLines={3}
-                            onFocus={() => setFocusedInput('medications')}
-                            onBlur={() => setFocusedInput(null)}
                         />
                         <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
                             <Text style={styles.skipText}>Skip for now</Text>
@@ -167,19 +147,12 @@ const ProfileSetupScreen: React.FC = () => {
                                 For example, therapy, physiotherapy, or alternative care.
                             </Text>
                         </View>
-                        <TextInput
-                            style={[
-                                styles.textArea,
-                                focusedInput === 'treatments' ? styles.inputFocused : styles.inputUnfocused
-                            ]}
+                        <Input
                             placeholder="Start typing"
-                            placeholderTextColor="#9C9C9C"
                             value={profileData.treatments}
                             onChangeText={(text) => setProfileData({ ...profileData, treatments: text })}
                             multiline
                             numberOfLines={3}
-                            onFocus={() => setFocusedInput('treatments')}
-                            onBlur={() => setFocusedInput(null)}
                         />
                         <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
                             <Text style={styles.skipText}>Skip for now</Text>
@@ -250,7 +223,7 @@ const ProfileSetupScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <BackgroundPattern />
-            <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
+            <View style={[styles.headerContainer]}>
                 <BackButton
                     onPress={handleBack}
                     size={17}
@@ -344,40 +317,10 @@ const styles = StyleSheet.create({
         color: '#484848',
         textAlign: 'center',
     },
-    textInput: {
-        width: '100%',
-        height: 40,
-        backgroundColor: '#EFEFEF',
-        borderRadius: 8,
-        paddingHorizontal: 13,
-        paddingVertical: 6,
-        fontSize: 12,
-        lineHeight: 18,
-        fontFamily: 'Prompt',
-        color: '#1B1B1B',
+    inputPosition: {
         position: 'absolute',
         top: 187,
-        borderWidth: 1,
-    },
-    textArea: {
         width: '100%',
-        height: 40,
-        backgroundColor: '#EFEFEF',
-        borderRadius: 8,
-        paddingHorizontal: 13,
-        paddingVertical: 6,
-        fontSize: 12,
-        lineHeight: 18,
-        fontFamily: 'Prompt',
-        color: '#1B1B1B',
-        marginTop: 61,
-        borderWidth: 1,
-    },
-    inputFocused: {
-        borderColor: '#61ABC5',
-    },
-    inputUnfocused: {
-        borderColor: 'transparent',
     },
     optionsContainer: {
         marginTop: 170,

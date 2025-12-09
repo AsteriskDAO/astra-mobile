@@ -8,7 +8,7 @@ import { getActiveTab } from '../utils/navigation';
 const PersistentBottomNav: React.FC = () => {
     const navigation = useNavigation();
     const { activeTab, setActiveTab } = useTab();
-    
+
     // Get current route name from navigation state
     const routeName = useNavigationState(state => {
         if (!state) return null;
@@ -59,9 +59,9 @@ const PersistentBottomNav: React.FC = () => {
 
     return (
         <View style={styles.container} pointerEvents="box-none">
-            <BottomNavigation 
-                activeTab={activeTab} 
-                onTabPress={handleTabPress} 
+            <BottomNavigation
+                activeTab={activeTab}
+                onTabPress={handleTabPress}
             />
         </View>
     );

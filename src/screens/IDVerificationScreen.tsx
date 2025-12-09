@@ -85,8 +85,6 @@ const IDVerificationScreen: React.FC = () => {
                             }, 1000);
                         }}
                         variant="outline"
-                        style={styles.verifyButton}
-                        textStyle={styles.verifyButtonText}
                     />
                 </View>
             </View>
@@ -194,13 +192,6 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: '100%',
         alignSelf: 'center',
-    },
-    verifyButton: {
-        ...commonStyles.buttonBase,
-        ...commonStyles.buttonOutline,
-    },
-    verifyButtonText: {
-        ...commonStyles.buttonTextSecondary,
     },
 });
 

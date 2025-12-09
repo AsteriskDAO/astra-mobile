@@ -14,23 +14,19 @@ const WelcomeScreen: React.FC = () => {
             <BackgroundPattern />
             <View style={styles.content}>
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>Welcome to Asterisk!</Text>
+                    <Text style={styles.title}>Welcome to Astra!</Text>
                 </View>
 
                 <View style={styles.buttonContainer}>
                     <Button
                         title="I am new to Astra"
                         onPress={() => navigation.navigate('CreateAccount' as never)}
-                        style={styles.primaryButton}
-                        textStyle={styles.primaryButtonText}
                     />
 
                     <Button
                         title="I have an Astra account"
                         onPress={() => navigation.navigate('Login' as never)}
                         variant="outline"
-                        style={styles.secondaryButton}
-                        textStyle={styles.secondaryButtonText}
                     />
                 </View>
             </View>
@@ -64,21 +60,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: '100%',
         gap: theme.spacing.base,
-    },
-    primaryButton: {
-        ...commonStyles.buttonBase,
-        ...commonStyles.buttonPrimary,
-    },
-    primaryButtonText: {
-        ...commonStyles.buttonTextPrimary,
-    },
-    secondaryButton: {
-        ...commonStyles.buttonBase,
-        ...commonStyles.buttonOutline,
-    },
-    secondaryButtonText: {
-        ...commonStyles.buttonTextSecondary,
-    },
+    }
 });
 
 export default WelcomeScreen;

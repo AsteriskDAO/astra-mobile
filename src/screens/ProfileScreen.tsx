@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import Logo from '../components/Logo';
-import BackButton from '../components/BackButton';
+import SecondaryHeader from '../components/SecondaryHeader';
+import Toggle from '../components/Toggle';
+import MetricsCards from '../components/MetricsCards';
+import DayStreakCard from '../components/DayStreakCard';
 import { theme } from '../theme/theme';
 
 const ProfileScreen: React.FC = () => {
@@ -42,23 +44,10 @@ const ProfileScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <BackButton
-                        onPress={() => navigation.goBack()}
-                        size={17}
-                        style={styles.backButton}
-                    />
-                    <View style={styles.headerTitleContainer}>
-                        <Text style={styles.headerTitle}>username</Text>
-                        <Logo size={13} tintColor="#FF01B4" style={styles.asteriskLogo} />
-                    </View>
-                    <View style={styles.profileIconContainer}>
-                        <View style={styles.profileIconCircle}>
-                            <View style={styles.profileIconInnerCircle} />
-                        </View>
-                    </View>
-                </View>
+                <SecondaryHeader
+                    title="username"
+                    onBack={() => navigation.goBack()}
+                />
 
                 {/* Profile Information Card */}
                 <View style={styles.card}>
@@ -129,28 +118,10 @@ const ProfileScreen: React.FC = () => {
                 </TouchableOpacity>
 
                 {/* Engagement Metrics */}
-                <View style={styles.metricsContainer}>
-                    <View style={styles.metricCard}>
-                        <Text style={styles.metricNumber}>12</Text>
-                        <Text style={styles.metricLabel}>points earned</Text>
-                    </View>
-                    <View style={styles.metricCard}>
-                        <Text style={styles.metricNumber}>#23</Text>
-                        <Text style={styles.metricLabel}>ranked today</Text>
-                    </View>
-                </View>
+                <MetricsCards pointsEarned="12" rank="#23" />
 
                 {/* Day Streak */}
-                <TouchableOpacity style={styles.streakCard} onPress={handleDayStreakPress}>
-                    <View style={styles.streakContent}>
-                        <Ionicons name="flame" size={15} color="#FF01B4" />
-                        <Text style={styles.streakTitle}>Day Streak</Text>
-                    </View>
-                    <View style={styles.streakRight}>
-                        <Text style={styles.streakNumber}>3</Text>
-                        <Ionicons name="chevron-forward" size={8} color="#949494" />
-                    </View>
-                </TouchableOpacity>
+                <DayStreakCard streakCount={3} onPress={handleDayStreakPress} />
 
                 {/* Research Invites */}
                 <View style={styles.researchCard}>
@@ -161,18 +132,10 @@ const ProfileScreen: React.FC = () => {
                                 Researchers may invite you to compensated focus groups in the future. Would you like to receive invitations?
                             </Text>
                         </View>
-                        <TouchableOpacity
-                            style={[
-                                styles.toggle,
-                                researchInvitesEnabled && styles.toggleActive
-                            ]}
-                            onPress={() => setResearchInvitesEnabled(!researchInvitesEnabled)}
-                        >
-                            <View style={[
-                                styles.toggleThumb,
-                                researchInvitesEnabled && styles.toggleThumbActive
-                            ]} />
-                        </TouchableOpacity>
+                        <Toggle
+                            value={researchInvitesEnabled}
+                            onValueChange={setResearchInvitesEnabled}
+                        />
                     </View>
                 </View>
             </ScrollView>
@@ -189,41 +152,9 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 25,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingTop: 42,
-        paddingBottom: 8,
-        marginBottom: 17,
-        position: 'relative',
-    },
-    backButton: {
-        position: 'absolute',
-        left: 0,
-        top: 44,
-    },
-    headerTitleContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
-    },
-    headerTitle: {
-        fontSize: 15,
-        lineHeight: 16,
-        fontWeight: '500',
-        fontFamily: 'Prompt',
-        color: '#232323',
-        textAlign: 'center',
-    },
-    asteriskLogo: {
-        marginLeft: 2,
-    },
     profileIconContainer: {
         position: 'absolute',
         right: 0,
-        top: 46,
         width: 14,
         height: 14,
     },
@@ -246,7 +177,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         borderRadius: 15,
         padding: 12,
-        marginBottom: 10,
+        marginTop: 30,
+        marginBottom: 20,
         width: '100%',
         minHeight: 151,
     },
@@ -349,73 +281,6 @@ const styles = StyleSheet.create({
         fontFamily: 'Prompt',
         color: '#232323',
     },
-    metricsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 10,
-        paddingHorizontal: 24,
-        gap: 5,
-    },
-    metricCard: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 15,
-        width: 133,
-        height: 55,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    metricNumber: {
-        fontSize: 15,
-        lineHeight: 16,
-        fontWeight: '500',
-        fontFamily: 'Prompt',
-        color: '#232323',
-        marginBottom: 7,
-        textAlign: 'center',
-    },
-    metricLabel: {
-        fontSize: 10,
-        lineHeight: 10,
-        fontWeight: '400',
-        fontFamily: 'Prompt',
-        color: '#949494',
-        textAlign: 'center',
-    },
-    streakCard: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 15,
-        height: 40,
-        paddingHorizontal: 12,
-        marginBottom: 16,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-    },
-    streakContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    streakTitle: {
-        fontSize: 13,
-        lineHeight: 14,
-        fontWeight: '500',
-        fontFamily: 'Prompt',
-        color: '#232323',
-    },
-    streakRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    streakNumber: {
-        fontSize: 14,
-        lineHeight: 21,
-        fontWeight: '500',
-        fontFamily: 'Prompt',
-        color: '#232323',
-    },
     researchCard: {
         backgroundColor: '#FFFFFF',
         borderRadius: 8,
@@ -449,29 +314,6 @@ const styles = StyleSheet.create({
         fontFamily: 'Prompt',
         color: '#949494',
         width: 199,
-    },
-    toggle: {
-        width: 30,
-        height: 16,
-        borderRadius: 6,
-        backgroundColor: '#CAE0E7',
-        justifyContent: 'center',
-        position: 'relative',
-    },
-    toggleActive: {
-        backgroundColor: '#CAE0E7',
-    },
-    toggleThumb: {
-        width: 12,
-        height: 14,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 5,
-        position: 'absolute',
-        left: 1,
-        top: 1,
-    },
-    toggleThumbActive: {
-        left: 17,
     },
 });
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../components/Button';
+import { theme } from '../theme/theme';
 
 const VerificationFailedScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 32,
@@ -90,11 +91,11 @@ const styles = StyleSheet.create({
         gap: 16,
     },
     helpButton: {
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
     },
     retryButton: {
         backgroundColor: 'white',
-        borderColor: '#E91E63',
+        borderColor: theme.colors.asteriskPink,
         borderWidth: 1,
     },
 });

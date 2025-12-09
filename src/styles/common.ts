@@ -55,31 +55,7 @@ export const commonStyles = StyleSheet.create({
         borderColor: 'transparent',
     },
 
-    // Button styles
-    buttonBase: {
-        width: '100%',
-        height: theme.spacing.buttonHeight,
-        borderRadius: theme.spacing.radius.md,
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: theme.spacing.buttonHeight,
-        paddingVertical: 0,
-    },
-
-    buttonOutline: {
-        backgroundColor: theme.colors.buttonSecondary,
-        borderColor: theme.colors.buttonPrimary,
-        borderWidth: theme.spacing.borderWidth.thin,
-    },
-
-    buttonPrimary: {
-        backgroundColor: theme.colors.buttonPrimary,
-    },
-
-    buttonText: {
-        ...theme.typography.presets.button,
-    },
-
+ 
     buttonTextPrimary: {
         ...theme.typography.presets.button,
         color: theme.colors.buttonPrimaryText,

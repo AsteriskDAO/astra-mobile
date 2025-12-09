@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Modal, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import Logo from '../components/Logo';
-import BackButton from '../components/BackButton';
+import SecondaryHeader from '../components/SecondaryHeader';
 import BackgroundPattern from '../components/BackgroundPattern';
 import Button from '../components/Button';
+import Input from '../components/Input';
 import { theme } from '../theme/theme';
 import { LAYOUT } from '../constants/layout';
 import { commonStyles } from '../styles/common';
@@ -21,11 +20,9 @@ interface FeedbackTypeConfig {
 
 const AppFeedbackScreen: React.FC = () => {
     const navigation = useNavigation();
-    const insets = useSafeAreaInsets();
     const [feedbackType, setFeedbackType] = useState<FeedbackType>('Bug Report');
     const [feedbackText, setFeedbackText] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
-    const [focusedInput, setFocusedInput] = useState(false);
 
     const feedbackTypes: FeedbackType[] = ['Bug Report', 'General Feedback', 'Feature Request'];
 
@@ -61,19 +58,10 @@ const AppFeedbackScreen: React.FC = () => {
         <View style={styles.container}>
             <BackgroundPattern />
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={[styles.header, { paddingTop: insets.top }]}>
-                    <BackButton
-                        onPress={() => navigation.goBack()}
-                        size={17}
-                        style={StyleSheet.flatten([styles.backButton, { top: insets.top }])}
-                    />
-                    <View style={styles.headerCenter}>
-                        <Text style={styles.headerTitle}>App Feedback</Text>
-                        <Logo size={16} tintColor={theme.colors.asteriskPink} style={styles.asteriskLogo} />
-                    </View>
-                    <View style={styles.headerRight} />
-                </View>
+                <SecondaryHeader
+                    title="App Feedback"
+                    onBack={() => navigation.goBack()}
+                />
 
                 {/* Feedback Type Selection */}
                 <View style={styles.section}>
@@ -94,20 +82,13 @@ const AppFeedbackScreen: React.FC = () => {
 
                 {/* Feedback Input */}
                 <View style={styles.section}>
-                    <TextInput
-                        style={[
-                            styles.textArea,
-                            focusedInput ? styles.textAreaFocused : styles.textAreaUnfocused,
-                        ]}
+                    <Input
                         placeholder={currentConfig.placeholder}
-                        placeholderTextColor={theme.colors.textDisabled}
                         value={feedbackText}
                         onChangeText={setFeedbackText}
                         multiline
                         numberOfLines={8}
-                        textAlignVertical="top"
-                        onFocus={() => setFocusedInput(true)}
-                        onBlur={() => setFocusedInput(false)}
+                        style={{ marginBottom: 0 }}
                     />
                 </View>
 
@@ -116,8 +97,6 @@ const AppFeedbackScreen: React.FC = () => {
                     <Button
                         title="Share with Astra"
                         onPress={handleSubmit}
-                        style={styles.submitButton}
-                        textStyle={styles.submitButtonText}
                     />
                 </View>
             </ScrollView>
@@ -178,35 +157,6 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: LAYOUT.CONTENT_PADDING_HORIZONTAL,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingBottom: theme.spacing.base,
-        marginBottom: theme.spacing.base,
-        position: 'relative',
-    },
-    backButton: {
-        position: 'absolute',
-        left: 0,
-    },
-    headerCenter: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
-    },
-    headerTitle: {
-        ...theme.typography.presets.h3,
-        color: theme.colors.textPrimary,
-        textAlign: 'center',
-    },
-    asteriskLogo: {
-        marginLeft: 2,
-    },
-    headerRight: {
-        width: 17,
-    },
     section: {
         marginBottom: theme.spacing.lg,
     },
@@ -220,52 +170,28 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: theme.colors.white,
-        borderRadius: theme.spacing.radius.base,
-        paddingHorizontal: theme.spacing.inputPaddingHorizontal,
-        paddingVertical: theme.spacing.inputPaddingVertical,
-        height: theme.spacing.inputHeight,
-        borderWidth: theme.spacing.borderWidth.thin,
-        borderColor: theme.colors.inputBorder || 'transparent',
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderWidth: 1,
+        borderColor: 'transparent',
     },
     dropdownText: {
-        ...theme.typography.presets.body,
-        color: theme.colors.textPrimary,
+        fontSize: 16,
+        fontWeight: '400',
+        color: '#272727',
+        fontFamily: theme.typography.fontFamily.prompt,
     },
     description: {
         ...theme.typography.presets.body,
         color: theme.colors.textPrimary,
         fontWeight: '500',
     },
-    textArea: {
-        backgroundColor: theme.colors.white,
-        borderRadius: theme.spacing.radius.base,
-        paddingHorizontal: theme.spacing.inputPaddingHorizontal,
-        paddingVertical: theme.spacing.inputPaddingVertical,
-        minHeight: 150,
-        fontSize: theme.typography.fontSize.md,
-        lineHeight: theme.typography.lineHeight.large,
-        fontFamily: theme.typography.fontFamily.prompt,
-        color: theme.colors.textPrimary,
-        borderWidth: theme.spacing.borderWidth.thin,
-    },
-    textAreaFocused: {
-        borderColor: theme.colors.ocean,
-    },
-    textAreaUnfocused: {
-        borderColor: 'transparent',
-    },
     buttonContainer: {
         marginTop: theme.spacing.base,
         marginBottom: theme.spacing.bottomNavHeight + theme.spacing.base,
     },
-    submitButton: {
-        ...commonStyles.buttonBase,
-        ...commonStyles.buttonPrimary,
-        backgroundColor: theme.colors.asteriskPink,
-    },
-    submitButtonText: {
-        ...commonStyles.buttonTextPrimary,
-    },
+    
     modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',

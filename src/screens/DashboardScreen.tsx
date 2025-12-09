@@ -3,16 +3,22 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
+import MetricsCards from '../components/MetricsCards';
+import WhatsNextSection from '../components/WhatsNextSection';
+import { useTab } from '../contexts/TabContext';
 import { theme } from '../theme/theme';
 import { useFixedHeaderHeight } from '../hooks/useFixedHeaderHeight';
 
 const DashboardScreen: React.FC = () => {
     const navigation = useNavigation();
     const headerHeight = useFixedHeaderHeight();
+    const { setActiveTab } = useTab();
 
     const handleStartCheckin = () => {
-        // DailyCheckin is now part of MainContainer, handled by tab switching
-        // If you need to open chat, it should switch to chat tab
+        // Switch to chat tab to show DailyCheckinScreen
+        setActiveTab('chat');
+        // Navigate to MainContainer if we're on a sub-screen
+        navigation.navigate('MainContainer' as never);
     };
 
     const days = [
@@ -71,52 +77,42 @@ const DashboardScreen: React.FC = () => {
                     <Button
                         title="Start check-in"
                         onPress={handleStartCheckin}
+                        variant="primary"
                         style={styles.checkinButton}
-                        textStyle={styles.checkinButtonText}
                     />
                 </View>
 
                 {/* Keep it up Section */}
                 <Text style={styles.sectionTitle}>Keep it up</Text>
-                <View style={styles.metricsContainer}>
-                    <View style={styles.metricCard}>
-                        <Text style={styles.metricNumber}>12</Text>
-                        <Text style={styles.metricLabel}>points earned</Text>
-                    </View>
-                    <View style={styles.metricCard}>
-                        <Text style={styles.metricNumber}>#23</Text>
-                        <Text style={styles.metricLabel}>ranked today</Text>
-                    </View>
-                </View>
+                <MetricsCards pointsEarned="12" rank="#23" />
 
-                <View style={styles.trendsBar}>
-                    <Text style={styles.trendsText}>My health trends</Text>
-                    <Text style={styles.trendsComingSoon}>(coming soon)</Text>
-                </View>
+                <Button
+                    title="My health trends (coming soon)"
+                    onPress={() => { }}
+                    variant="primary"
+                    disabled
+                    style={styles.trendsButton}
+                />
 
                 {/* What's next Section */}
-                <Text style={styles.sectionTitle}>What's next for you</Text>
-                <TouchableOpacity style={styles.actionCard}>
-                    <Ionicons name="mail-outline" size={24} color="#232323" />
-                    <View style={styles.actionCardContent}>
-                        <Text style={styles.actionCardTitle}>Research invite</Text>
-                        <Text style={styles.actionCardSubtitle}>
-                            You've been invited to join Study XYZ
-                        </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#949494" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.actionCard}>
-                    <Ionicons name="checkmark-circle-outline" size={24} color="#232323" />
-                    <View style={styles.actionCardContent}>
-                        <Text style={styles.actionCardTitle}>Cast your vote</Text>
-                        <Text style={styles.actionCardSubtitle}>
-                            Help shape AsteriskDAO's next step.
-                        </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#949494" />
-                </TouchableOpacity>
+                <WhatsNextSection
+                    items={[
+                        {
+                            iconSource: require('../../assets/research-invite.svg'),
+                            title: 'Research invite',
+                            subtitle: "You've been invited to join Study XYZ",
+                            onPress: () => navigation.navigate('ResearchInvite' as never),
+                        },
+                        {
+                            iconSource: require('../../assets/vote.svg'),
+                            title: 'Cast your vote',
+                            subtitle: "Help shape AsteriskDAO's next step.",
+                            onPress: () => {
+                                // Navigate to voting screen when implemented
+                            },
+                        },
+                    ]}
+                />
             </ScrollView>
         </View>
     );
@@ -129,7 +125,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        paddingHorizontal: 20,
+        paddingHorizontal: 25,
     },
     scrollContent: {
         paddingBottom: 20,
@@ -207,15 +203,6 @@ const styles = StyleSheet.create({
     },
     checkinButton: {
         width: '100%',
-        backgroundColor: '#FF01B4',
-        borderRadius: 10,
-        paddingVertical: 12,
-    },
-    checkinButtonText: {
-        fontFamily: 'Prompt',
-        fontWeight: '500',
-        fontSize: 11,
-        color: '#FFFFFF',
     },
     sectionTitle: {
         fontFamily: 'Prompt',
@@ -224,75 +211,11 @@ const styles = StyleSheet.create({
         color: '#232323',
         marginBottom: 16,
     },
-    metricsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 16,
-    },
-    metricCard: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 15,
-        padding: 16,
-        alignItems: 'center',
-        marginHorizontal: 6,
-    },
-    metricNumber: {
-        fontFamily: 'Prompt',
-        fontSize: 15,
-        fontWeight: '500',
-        color: '#232323',
-        marginBottom: 4,
-    },
-    metricLabel: {
-        fontFamily: 'Prompt',
-        fontSize: 10,
-        color: '#949494',
-        textAlign: 'center',
-    },
-    trendsBar: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: '#E5E5E5',
-        borderRadius: 10,
-        padding: 16,
+    trendsButton: {
         marginBottom: 24,
+        borderRadius: 10,
     },
-    trendsText: {
-        fontFamily: 'Prompt',
-        fontSize: 13,
-        color: '#949494',
-    },
-    trendsComingSoon: {
-        fontFamily: 'Prompt',
-        fontSize: 13,
-        color: '#949494',
-    },
-    actionCard: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        borderRadius: 15,
-        padding: 16,
-        marginBottom: 12,
-    },
-    actionCardContent: {
-        flex: 1,
-        marginLeft: 12,
-    },
-    actionCardTitle: {
-        fontFamily: 'Prompt',
-        fontSize: 13,
-        fontWeight: '500',
-        color: '#232323',
-        marginBottom: 4,
-    },
-    actionCardSubtitle: {
-        fontFamily: 'Prompt',
-        fontSize: 10,
-        color: '#949494',
-    },
+
 });
 
 export default DashboardScreen;

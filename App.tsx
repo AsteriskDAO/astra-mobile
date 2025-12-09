@@ -35,6 +35,7 @@ import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 import EditEmailScreen from './src/screens/EditEmailScreen';
 import NotificationsSettingsScreen from './src/screens/NotificationsSettingsScreen';
 import AppFeedbackScreen from './src/screens/AppFeedbackScreen';
+import ResearchInviteScreen from './src/screens/ResearchInviteScreen';
 
 const Stack = createStackNavigator();
 
@@ -62,7 +63,7 @@ export default function App() {
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="TelegramLogin" component={TelegramLoginScreen} />
               <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
-              
+
               {/* Main container - handles tab switching without navigation */}
               <Stack.Screen name="MainContainer" component={MainContainerScreen} />
 
@@ -81,6 +82,7 @@ export default function App() {
               <Stack.Screen name="EditEmail" component={EditEmailScreen} />
               <Stack.Screen name="NotificationsSettings" component={NotificationsSettingsScreen} />
               <Stack.Screen name="AppFeedback" component={AppFeedbackScreen} />
+              <Stack.Screen name="ResearchInvite" component={ResearchInviteScreen} />
             </Stack.Navigator>
             {/* Persistent bottom navigation - single instance, persists across all screens */}
             <PersistentBottomNav />

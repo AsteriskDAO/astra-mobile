@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Modal } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
+import Input from '../components/Input';
+import Label from '../components/Label';
+import SecondaryHeader from '../components/SecondaryHeader';
+import { RootStackParamList } from '../types/navigation';
+import { Medication } from '../types/health';
+import { theme } from '../theme/theme';
+
+type AddMedicationScreenRouteProp = RouteProp<RootStackParamList, 'AddMedicationScreen'>;
 
 const AddMedicationScreen: React.FC = () => {
     const navigation = useNavigation();
-    const route = useRoute();
-    const [focusedInput, setFocusedInput] = useState<string | null>(null);
+    const route = useRoute<AddMedicationScreenRouteProp>();
     const [formData, setFormData] = useState({
         medicationName: '',
         startDate: '',
@@ -65,44 +72,27 @@ const AddMedicationScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={handleBack}>
-                        <Ionicons name="chevron-back" size={24} color="#2196F3" />
-                    </TouchableOpacity>
-                    <View style={styles.headerCenter}>
-                        <Ionicons name="medical-outline" size={20} color="#333333" />
-                        <Text style={styles.headerTitle}>
-                            {isEdit ? 'Edit medication' : 'Add medication'}
-                        </Text>
-                    </View>
-                    <Text style={styles.asterisk}>*</Text>
-                </View>
+                <SecondaryHeader
+                    title={isEdit ? 'Edit medication' : 'Add medication'}
+                    onBack={handleBack}
+                    icon={{
+                        name: 'medical-outline',
+                        size: 20,
+                        color: '#333333',
+                    }}
+                />
 
                 {/* Form Fields */}
                 <View style={styles.formContainer}>
-                    <View style={styles.inputGroup}>
-                        <Text style={[
-                            styles.label,
-                            focusedInput === 'medicationName' && styles.labelFocused
-                        ]}>
-                            Medication Name
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                focusedInput === 'medicationName' && styles.inputFocused
-                            ]}
-                            value={formData.medicationName}
-                            onChangeText={(text) => handleInputChange('medicationName', text)}
-                            placeholder="Enter medication name"
-                            onFocus={() => setFocusedInput('medicationName')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                    </View>
+                    <Input
+                        label="Medication Name"
+                        value={formData.medicationName}
+                        onChangeText={(text) => handleInputChange('medicationName', text)}
+                        placeholder="Enter medication name"
+                    />
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>When did you begin taking it?</Text>
+                        <Label>When did you begin taking it?</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.startDate && styles.placeholder]}>
                                 {formData.startDate || 'Select Date'}
@@ -112,7 +102,7 @@ const AddMedicationScreen: React.FC = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Type</Text>
+                        <Label>Type</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.type && styles.placeholder]}>
                                 {formData.type || 'Select Type'}
@@ -122,7 +112,7 @@ const AddMedicationScreen: React.FC = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Status</Text>
+                        <Label>Status</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.status && styles.placeholder]}>
                                 {formData.status || 'Select Status'}
@@ -132,7 +122,7 @@ const AddMedicationScreen: React.FC = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Frequency</Text>
+                        <Label>Frequency</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.frequency && styles.placeholder]}>
                                 {formData.frequency || 'Select Frequency'}
@@ -141,27 +131,14 @@ const AddMedicationScreen: React.FC = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={styles.inputGroup}>
-                        <Text style={[
-                            styles.label,
-                            focusedInput === 'notes' && styles.labelFocused
-                        ]}>
-                            Notes
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.textArea,
-                                focusedInput === 'notes' && styles.inputFocused
-                            ]}
-                            value={formData.notes}
-                            onChangeText={(text) => handleInputChange('notes', text)}
-                            placeholder="You can write anything relevant to this medication here"
-                            multiline
-                            numberOfLines={4}
-                            onFocus={() => setFocusedInput('notes')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                    </View>
+                    <Input
+                        label="Notes"
+                        value={formData.notes}
+                        onChangeText={(text) => handleInputChange('notes', text)}
+                        placeholder="You can write anything relevant to this medication here"
+                        multiline
+                        numberOfLines={4}
+                    />
                 </View>
 
                 {/* Action Buttons */}
@@ -225,55 +202,11 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 25,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 16,
-        paddingTop: 60,
-    },
-    headerCenter: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginLeft: 16,
-    },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333333',
-        marginLeft: 8,
-    },
-    asterisk: {
-        fontSize: 18,
-        color: '#E91E63',
-    },
     formContainer: {
         marginTop: 20,
     },
     inputGroup: {
         marginBottom: 20,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#9C9C9C',
-        marginBottom: 8,
-    },
-    labelFocused: {
-        color: '#61ABC5',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: 'transparent',
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        fontSize: 16,
-        backgroundColor: 'white',
-        color: '#333333',
-    },
-    inputFocused: {
-        borderColor: '#61ABC5',
     },
     dropdown: {
         flexDirection: 'row',
@@ -288,22 +221,12 @@ const styles = StyleSheet.create({
     },
     dropdownText: {
         fontSize: 16,
-        color: '#333333',
+        fontWeight: '400',
+        color: '#272727',
+        fontFamily: theme.typography.fontFamily.prompt,
     },
     placeholder: {
         color: '#999999',
-    },
-    textArea: {
-        borderWidth: 1,
-        borderColor: 'transparent',
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        fontSize: 16,
-        backgroundColor: 'white',
-        color: '#333333',
-        height: 100,
-        textAlignVertical: 'top',
     },
     buttonContainer: {
         marginTop: 20,
@@ -311,11 +234,11 @@ const styles = StyleSheet.create({
         gap: 16,
     },
     saveButton: {
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
     },
     deleteButton: {
         backgroundColor: 'white',
-        borderColor: '#E91E63',
+        borderColor: theme.colors.asteriskPink,
         borderWidth: 1,
         flexDirection: 'row',
         alignItems: 'center',
@@ -353,11 +276,11 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     deleteConfirmButton: {
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
     },
     cancelButton: {
         backgroundColor: 'white',
-        borderColor: '#E91E63',
+        borderColor: theme.colors.asteriskPink,
         borderWidth: 1,
     },
 });

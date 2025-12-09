@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { View, TextInput, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import React, { useState, ReactNode } from 'react';
+import { View, TextInput, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { theme } from '../theme/theme';
+import Label from './Label';
 
 interface InputProps {
-    label?: string;
+    label?: string | ReactNode;
     placeholder?: string;
     value: string;
     onChangeText: (text: string) => void;
@@ -13,6 +14,13 @@ interface InputProps {
     inputStyle?: TextStyle;
     multiline?: boolean;
     numberOfLines?: number;
+    keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+    variant?: 'default' | 'compact'; // default = white background (medication style), compact = smaller padding/font
+    height?: number; // Custom height override
+    required?: boolean; // Show pink asterisk for required fields
+    onFocus?: () => void;
+    onBlur?: () => void;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -26,36 +34,53 @@ const Input: React.FC<InputProps> = ({
     inputStyle,
     multiline = false,
     numberOfLines = 1,
+    keyboardType = 'default',
+    autoCapitalize = 'sentences',
+    variant = 'default',
+    height,
+    required = false,
+    onFocus,
+    onBlur,
 }) => {
     const [isFocused, setIsFocused] = useState(false);
 
     return (
         <View style={[styles.container, style]}>
             {label && (
-                <Text style={[
-                    styles.label,
-                    isFocused && styles.labelFocused,
-                    labelStyle
-                ]}>
+                <Label
+                    focused={isFocused}
+                    required={required}
+                    style={labelStyle}
+                >
                     {label}
-                </Text>
+                </Label>
             )}
             <TextInput
                 style={[
                     styles.input,
+                    variant === 'compact' && styles.inputCompact,
                     isFocused && styles.inputFocused,
                     multiline && styles.multilineInput,
+                    height !== undefined && { height },
                     inputStyle,
                 ]}
                 placeholder={placeholder}
-                placeholderTextColor={theme.colors.textPlaceholder}
+                placeholderTextColor="#949494"
                 value={value}
                 onChangeText={onChangeText}
                 secureTextEntry={secureTextEntry}
                 multiline={multiline}
                 numberOfLines={numberOfLines}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
+                keyboardType={keyboardType}
+                autoCapitalize={autoCapitalize}
+                onFocus={() => {
+                    setIsFocused(true);
+                    onFocus?.();
+                }}
+                onBlur={() => {
+                    setIsFocused(false);
+                    onBlur?.();
+                }}
             />
         </View>
     );
@@ -63,32 +88,33 @@ const Input: React.FC<InputProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: theme.spacing.base,
-    },
-    label: {
-        ...theme.typography.presets.label,
-        color: theme.colors.textPlaceholder,
-        marginBottom: theme.spacing.sm,
-    },
-    labelFocused: {
-        color: theme.colors.ocean,
+        marginBottom: 20,
     },
     input: {
-        borderWidth: theme.spacing.borderWidth.thin,
+        borderWidth: 1,
         borderColor: 'transparent',
-        borderRadius: theme.spacing.radius.base,
-        paddingHorizontal: theme.spacing.base,
+        borderRadius: 8,
+        paddingHorizontal: 16,
         paddingVertical: 12,
-        fontSize: theme.typography.fontSize.base,
-        backgroundColor: theme.colors.inputBackground,
-        color: theme.colors.textPrimary,
+        fontSize: 16,
+        fontWeight: '400',
+        backgroundColor: theme.colors.white,
+        color: '#272727',
+        fontFamily: theme.typography.fontFamily.prompt,
     },
     inputFocused: {
         borderColor: theme.colors.ocean,
+        borderWidth: 1,
     },
     multilineInput: {
-        height: 80,
+        height: 100,
         textAlignVertical: 'top',
+    },
+    inputCompact: {
+        paddingHorizontal: 13,
+        paddingVertical: 6,
+        fontSize: 12,
+        backgroundColor: theme.colors.inputBackground,
     },
 });
 

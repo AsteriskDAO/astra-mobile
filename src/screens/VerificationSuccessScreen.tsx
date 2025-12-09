@@ -25,8 +25,6 @@ const VerificationSuccessScreen: React.FC = () => {
                         title="Continue"
                         onPress={() => navigation.navigate('ProfileSetup' as never)}
                         variant="outline"
-                        style={styles.continueButton}
-                        textStyle={styles.continueButtonText}
                     />
                 </View>
             </View>
@@ -65,13 +63,6 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: theme.spacing.buttonWidth,
         alignSelf: 'center',
-    },
-    continueButton: {
-        ...commonStyles.buttonBase,
-        ...commonStyles.buttonOutline,
-    },
-    continueButtonText: {
-        ...commonStyles.buttonTextSecondary,
     },
 });
 

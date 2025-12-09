@@ -4,14 +4,17 @@ import {
     Text,
     StyleSheet,
     ScrollView,
-    TextInput,
     TouchableOpacity,
     KeyboardAvoidingView,
-    Platform
+    Platform,
+    Image
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Input from '../components/Input';
 import { Ionicons } from '@expo/vector-icons';
 import { useFixedHeaderHeight } from '../hooks/useFixedHeaderHeight';
+import { theme } from '../theme/theme';
 
 interface Message {
     id: string;
@@ -23,6 +26,7 @@ interface Message {
 const DailyCheckinScreen: React.FC = () => {
     const navigation = useNavigation();
     const headerHeight = useFixedHeaderHeight();
+    const insets = useSafeAreaInsets();
     const [isInputFocused, setIsInputFocused] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -77,9 +81,11 @@ const DailyCheckinScreen: React.FC = () => {
             ]}
         >
             {!message.isUser && (
-                <View style={styles.botIcon}>
-                    <Text style={styles.asterisk}>*</Text>
-                </View>
+                <Image
+                    style={styles.asteriskLogo}
+                    source={require('../../assets/PinkAsterisk1.svg')}
+                    resizeMode="contain"
+                />
             )}
             <View
                 style={[
@@ -104,18 +110,21 @@ const DailyCheckinScreen: React.FC = () => {
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-            <ScrollView 
-                style={[styles.messagesContainer, { paddingTop: headerHeight }]} 
-                showsVerticalScrollIndicator={false} 
+            <ScrollView
+                style={[styles.messagesContainer, { paddingTop: headerHeight }]}
+                showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
                 {messages.map(renderMessage)}
 
                 {isTyping && (
                     <View style={[styles.messageContainer, styles.botMessage]}>
-                        <View style={styles.botIcon}>
-                            <Text style={styles.asterisk}>*</Text>
-                        </View>
+                        <Image
+                            style={styles.asteriskLogo}
+                            source={require('../../assets/PinkAsterisk1.svg')}
+                            resizeMode="contain"
+
+                        />
                         <View style={[styles.messageBubble, styles.botBubble]}>
                             <Text style={[styles.messageText, styles.botText]}>typing...</Text>
                         </View>
@@ -123,21 +132,20 @@ const DailyCheckinScreen: React.FC = () => {
                 )}
             </ScrollView>
 
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={[
-                        styles.textInput,
-                        isInputFocused && styles.textInputFocused
-                    ]}
-                    placeholder="type"
-                    value={inputText}
-                    onChangeText={setInputText}
-                    multiline
-                    onFocus={() => setIsInputFocused(true)}
-                    onBlur={() => setIsInputFocused(false)}
-                />
+            <View style={[styles.inputContainer, { paddingBottom: 16 + theme.spacing.bottomNavHeight }]}>
+                <View style={styles.inputWrapper}>
+                    <Input
+                        placeholder="type"
+                        value={inputText}
+                        onChangeText={setInputText}
+                        style={styles.inputWrapperStyle}
+                        inputStyle={styles.textInput}
+                        onFocus={() => setIsInputFocused(true)}
+                        onBlur={() => setIsInputFocused(false)}
+                    />
+                </View>
                 <TouchableOpacity style={styles.micButton}>
-                    <Ionicons name="mic" size={20} color="#2196F3" />
+                    <Ionicons name="mic" size={20} color={theme.colors.ocean} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
                     <Text style={styles.sendButtonText}>Send</Text>
@@ -154,7 +162,7 @@ const styles = StyleSheet.create({
     },
     messagesContainer: {
         flex: 1,
-        paddingHorizontal: 20,
+        paddingHorizontal: 25,
     },
     scrollContent: {
         paddingBottom: 20,
@@ -170,19 +178,11 @@ const styles = StyleSheet.create({
     botMessage: {
         justifyContent: 'flex-start',
     },
-    botIcon: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#E91E63',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 8,
-    },
-    asterisk: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
+
+    asteriskLogo: {
+        width: 24.57,
+        height: 28.67,
+        // Centered within the 32x32 container using justifyContent and alignItems
     },
     messageBubble: {
         maxWidth: '80%',
@@ -209,25 +209,28 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'flex-end',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
+        paddingHorizontal: 25,
+        paddingTop: 16,
         backgroundColor: 'white',
         borderTopWidth: 1,
         borderTopColor: '#E0E0E0',
     },
-    textInput: {
+    inputWrapper: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: 'transparent',
-        borderRadius: 20,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
         marginRight: 8,
-        maxHeight: 100,
-        fontSize: 16,
     },
-    textInputFocused: {
-        borderColor: '#61ABC5',
+    inputWrapperStyle: {
+        marginBottom: 0,
+    },
+    textInput: {
+        backgroundColor: '#F5F5F5',
+        borderRadius: 20,
+        maxHeight: 100,
+        borderWidth: 0,
+        fontSize: 16,
+        fontWeight: '400',
+        color: '#272727',
+        fontFamily: theme.typography.fontFamily.prompt,
     },
     micButton: {
         width: 40,
@@ -239,15 +242,19 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     sendButton: {
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
         paddingHorizontal: 20,
         paddingVertical: 12,
         borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     sendButtonText: {
         color: 'white',
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '400',
+        fontFamily: theme.typography.fontFamily.prompt,
+        textAlign: 'center',
     },
 });
 

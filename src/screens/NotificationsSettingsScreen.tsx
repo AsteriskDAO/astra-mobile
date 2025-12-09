@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import Logo from '../components/Logo';
-import BackButton from '../components/BackButton';
+import SecondaryHeader from '../components/SecondaryHeader';
 import BackgroundPattern from '../components/BackgroundPattern';
+import Toggle from '../components/Toggle';
+import Input from '../components/Input';
+import Label from '../components/Label';
 import { theme } from '../theme/theme';
 
 const NotificationsSettingsScreen: React.FC = () => {
     const navigation = useNavigation();
-    const insets = useSafeAreaInsets();
     const [reminderFrequency, setReminderFrequency] = useState('Weekly');
     const [reminderDay, setReminderDay] = useState('');
     const [reminderTime, setReminderTime] = useState('');
@@ -18,7 +18,6 @@ const NotificationsSettingsScreen: React.FC = () => {
     const [followSubstack, setFollowSubstack] = useState(false);
     const [showFrequencyModal, setShowFrequencyModal] = useState(false);
     const [showDayModal, setShowDayModal] = useState(false);
-    const [focusedInput, setFocusedInput] = useState(false);
 
     const frequencyOptions = ['Daily', 'Weekly', 'Monthly'];
     const dayOptions = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -27,25 +26,16 @@ const NotificationsSettingsScreen: React.FC = () => {
         <View style={styles.container}>
             <BackgroundPattern />
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={[styles.header, { paddingTop: insets.top }]}>
-                    <BackButton
-                        onPress={() => navigation.goBack()}
-                        size={17}
-                        style={StyleSheet.flatten([styles.backButton, { top: insets.top }])}
-                    />
-                    <View style={styles.headerCenter}>
-                        <Text style={styles.headerTitle}>Notifications Settings</Text>
-                        <Logo size={16} tintColor={theme.colors.asteriskPink} style={styles.asteriskLogo} />
-                    </View>
-                    <View style={styles.headerRight} />
-                </View>
+                <SecondaryHeader
+                    title="Notifications Settings"
+                    onBack={() => navigation.goBack()}
+                />
 
                 {/* Reminder Settings Section */}
                 <View style={styles.section}>
                     {/* How often do you want reminders? */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>How often do you want reminders?</Text>
+                        <Label>How often do you want reminders?</Label>
                         <TouchableOpacity
                             style={styles.dropdown}
                             onPress={() => setShowFrequencyModal(true)}
@@ -57,7 +47,7 @@ const NotificationsSettingsScreen: React.FC = () => {
 
                     {/* Reminder Day */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Reminder Day</Text>
+                        <Label>Reminder Day</Label>
                         <TouchableOpacity
                             style={styles.dropdown}
                             onPress={() => setShowDayModal(true)}
@@ -70,21 +60,13 @@ const NotificationsSettingsScreen: React.FC = () => {
                     </View>
 
                     {/* Preferred Reminder Time */}
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Preferred Reminder Time</Text>
-                        <TextInput
-                            style={[
-                                styles.timeInput,
-                                focusedInput && styles.timeInputFocused
-                            ]}
-                            value={reminderTime}
-                            onChangeText={setReminderTime}
-                            placeholder="Pick a time that suits you best"
-                            placeholderTextColor="#949494"
-                            onFocus={() => setFocusedInput(true)}
-                            onBlur={() => setFocusedInput(false)}
-                        />
-                    </View>
+                    <Input
+                        label="Preferred Reminder Time"
+                        placeholder="Pick a time that suits you best"
+                        value={reminderTime}
+                        onChangeText={setReminderTime}
+                        style={styles.inputGroup}
+                    />
                 </View>
 
                 {/* Other Notifications Section */}
@@ -99,18 +81,10 @@ const NotificationsSettingsScreen: React.FC = () => {
                                 Receive your daily check-in reminders via email.
                             </Text>
                         </View>
-                        <TouchableOpacity
-                            style={[
-                                styles.toggle,
-                                emailNotifications && styles.toggleActive
-                            ]}
-                            onPress={() => setEmailNotifications(!emailNotifications)}
-                        >
-                            <View style={[
-                                styles.toggleThumb,
-                                emailNotifications && styles.toggleThumbActive
-                            ]} />
-                        </TouchableOpacity>
+                        <Toggle
+                            value={emailNotifications}
+                            onValueChange={setEmailNotifications}
+                        />
                     </View>
 
                     {/* Follow our Substack */}
@@ -121,18 +95,10 @@ const NotificationsSettingsScreen: React.FC = () => {
                                 Get notified when new research and articles are published on our Substack.
                             </Text>
                         </View>
-                        <TouchableOpacity
-                            style={[
-                                styles.toggle,
-                                followSubstack && styles.toggleActive
-                            ]}
-                            onPress={() => setFollowSubstack(!followSubstack)}
-                        >
-                            <View style={[
-                                styles.toggleThumb,
-                                followSubstack && styles.toggleThumbActive
-                            ]} />
-                        </TouchableOpacity>
+                        <Toggle
+                            value={followSubstack}
+                            onValueChange={setFollowSubstack}
+                        />
                     </View>
                 </View>
             </ScrollView>
@@ -208,35 +174,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         paddingBottom: theme.spacing.bottomNavHeight + theme.spacing.base,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingBottom: theme.spacing.base,
-        marginBottom: theme.spacing.base,
-        position: 'relative',
-    },
-    backButton: {
-        position: 'absolute',
-        left: 0,
-    },
-    headerCenter: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
-    },
-    headerTitle: {
-        ...theme.typography.presets.h3,
-        color: theme.colors.textPrimary,
-        textAlign: 'center',
-    },
-    asteriskLogo: {
-        marginLeft: 2,
-    },
-    headerRight: {
-        width: 17,
-    },
     section: {
         marginBottom: 20,
     },
@@ -252,44 +189,25 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         width: '100%',
     },
-    label: {
-        ...theme.typography.presets.bodySmall,
-        color: theme.colors.textPrimary,
-        fontSize: 12,
-        lineHeight: 18,
-        marginBottom: 10,
-    },
     dropdown: {
-        height: 40,
         backgroundColor: theme.colors.white,
         borderRadius: 8,
-        paddingHorizontal: 13,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        borderWidth: 1,
+        borderColor: 'transparent',
     },
     dropdownText: {
-        ...theme.typography.presets.body,
-        fontSize: 12,
-        lineHeight: 18,
-        color: theme.colors.textPrimary,
+        fontSize: 16,
+        fontWeight: '400',
+        color: '#272727',
+        fontFamily: theme.typography.fontFamily.prompt,
     },
     placeholder: {
         color: theme.colors.textDisabled,
-    },
-    timeInput: {
-        height: 40,
-        backgroundColor: theme.colors.white,
-        borderRadius: 8,
-        paddingHorizontal: 13,
-        ...theme.typography.presets.body,
-        fontSize: 12,
-        lineHeight: 18,
-        color: theme.colors.textPrimary,
-    },
-    timeInputFocused: {
-        borderWidth: 1,
-        borderColor: theme.colors.ocean,
     },
     notificationCard: {
         backgroundColor: theme.colors.white,
@@ -299,7 +217,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: 260,
+        width: '100%',
         alignSelf: 'center',
     },
     notificationContent: {
@@ -318,27 +236,6 @@ const styles = StyleSheet.create({
         fontSize: 10,
         lineHeight: 12,
         color: theme.colors.textDisabled,
-    },
-    toggle: {
-        width: 30,
-        height: 16,
-        backgroundColor: theme.colors.oceanLight,
-        borderRadius: 6,
-        justifyContent: 'center',
-        paddingHorizontal: 1,
-    },
-    toggleActive: {
-        backgroundColor: theme.colors.ocean,
-    },
-    toggleThumb: {
-        width: 12,
-        height: 14,
-        backgroundColor: theme.colors.white,
-        borderRadius: 5,
-        alignSelf: 'flex-start',
-    },
-    toggleThumbActive: {
-        alignSelf: 'flex-end',
     },
     modalOverlay: {
         flex: 1,

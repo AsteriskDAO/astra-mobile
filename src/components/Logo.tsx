@@ -11,7 +11,7 @@ const Logo: React.FC<LogoProps> = ({ size = 24, style, tintColor }) => {
     return (
         <View style={[styles.container, { width: size, height: size }, style]}>
             <Image
-                source={require('../../assets/logo.svg')}
+                source={require('../../assets/asterisk.png')}
                 style={[
                     styles.image,
                     { width: size, height: size },

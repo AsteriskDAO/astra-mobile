@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
-import Logo from '../components/Logo';
-import BackButton from '../components/BackButton';
+import SecondaryHeader from '../components/SecondaryHeader';
+import Input from '../components/Input';
+import Label from '../components/Label';
 import { theme } from '../theme/theme';
 import { commonStyles } from '../styles/common';
 
 const ProfileInformationScreen: React.FC = () => {
     const navigation = useNavigation();
-    const insets = useSafeAreaInsets();
-    const [focusedInput, setFocusedInput] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         nickname: 'nickname',
         ageRange: '20-25',
@@ -30,61 +28,32 @@ const ProfileInformationScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={[styles.header, { paddingTop: insets.top }]}>
-                    <BackButton
-                        onPress={() => navigation.goBack()}
-                        size={17}
-                        style={StyleSheet.flatten([styles.backButton, { top: insets.top }])}
-                    />
-                    <View style={styles.headerCenter}>
-                        <Text style={styles.headerTitle}>Profile Information</Text>
-                        <Logo size={13} tintColor="#FF01B4" style={styles.asteriskLogo} />
-                    </View>
-                </View>
+                <SecondaryHeader
+                    title="Profile Information"
+                    onBack={() => navigation.goBack()}
+                    titleColor={theme.colors.textSecondary}
+                />
 
                 {/* Form Fields */}
                 <View style={styles.formContainer}>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.labelRequired}>
-                            Nickname<Text style={styles.required}>*</Text>
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                focusedInput === 'nickname' && styles.inputFocused
-                            ]}
-                            value={formData.nickname}
-                            onChangeText={(text) => setFormData({ ...formData, nickname: text })}
-                            placeholder="nickname"
-                            placeholderTextColor="#949494"
-                            onFocus={() => setFocusedInput('nickname')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                    </View>
+                    <Input
+                        label="Nickname"
+                        placeholder="nickname"
+                        value={formData.nickname}
+                        onChangeText={(text) => setFormData({ ...formData, nickname: text })}
+                        required
+                    />
+
+                    <Input
+                        label="Age Range"
+                        placeholder="20-25"
+                        value={formData.ageRange}
+                        onChangeText={(text) => setFormData({ ...formData, ageRange: text })}
+                        required
+                    />
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.labelRequired}>
-                            Age Range<Text style={styles.required}>*</Text>
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                focusedInput === 'ageRange' && styles.inputFocused
-                            ]}
-                            value={formData.ageRange}
-                            onChangeText={(text) => setFormData({ ...formData, ageRange: text })}
-                            placeholder="20-25"
-                            placeholderTextColor="#949494"
-                            onFocus={() => setFocusedInput('ageRange')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                    </View>
-
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.labelRequired}>
-                            Ethnicity<Text style={styles.required}>*</Text>
-                        </Text>
+                        <Label required>Ethnicity</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.ethnicity && styles.placeholder]}>
                                 {formData.ethnicity || 'Select your ethnicity'}
@@ -93,26 +62,16 @@ const ProfileInformationScreen: React.FC = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.labelRequired}>
-                            Location<Text style={styles.required}>*</Text>
-                        </Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                focusedInput === 'location' && styles.inputFocused
-                            ]}
-                            value={formData.location}
-                            onChangeText={(text) => setFormData({ ...formData, location: text })}
-                            placeholder="Europe"
-                            placeholderTextColor="#949494"
-                            onFocus={() => setFocusedInput('location')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                    </View>
+                    <Input
+                        label="Location"
+                        placeholder="Europe"
+                        value={formData.location}
+                        onChangeText={(text) => setFormData({ ...formData, location: text })}
+                        required
+                    />
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Pregnant (optional)</Text>
+                        <Label>Pregnant (optional)</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={styles.dropdownText}>{formData.pregnancy}</Text>
                             <Ionicons name="chevron-down" size={12} color="#232323" />
@@ -120,7 +79,7 @@ const ProfileInformationScreen: React.FC = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Are you a caretaker (optional)</Text>
+                        <Label>Are you a caretaker (optional)</Label>
                         <TouchableOpacity style={styles.dropdown}>
                             <Text style={[styles.dropdownText, !formData.caretaker && styles.placeholder]}>
                                 {formData.caretaker || 'Choose an option'}
@@ -131,15 +90,11 @@ const ProfileInformationScreen: React.FC = () => {
                 </View>
 
                 {/* Save Button */}
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title="Save"
-                        onPress={handleSave}
-                        variant="primary"
-                        style={styles.saveButton}
-                        textStyle={styles.saveButtonText}
-                    />
-                </View>
+                <Button
+                    title="Save"
+                    onPress={handleSave}
+                    variant="primary"
+                />
             </ScrollView>
         </View>
     );
@@ -153,32 +108,6 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 25,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingBottom: theme.spacing.base,
-        position: 'relative',
-        width: '100%',
-    },
-    backButton: {
-        position: 'absolute',
-        left: 0,
-    },
-    headerCenter: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
-    },
-    headerTitle: {
-        ...theme.typography.presets.h3,
-        color: theme.colors.textSecondary,
-        textAlign: 'center',
-    },
-    asteriskLogo: {
-        marginLeft: 2,
-    },
     formContainer: {
         ...commonStyles.formContainer,
         marginTop: theme.spacing.lg,
@@ -186,65 +115,28 @@ const styles = StyleSheet.create({
     inputGroup: {
         marginBottom: theme.spacing.lg,
     },
-    label: {
-        ...theme.typography.presets.label,
-        color: theme.colors.textPlaceholder,
-        marginBottom: 0,
-    },
-    labelRequired: {
-        ...theme.typography.presets.label,
-        color: theme.colors.ocean,
-        marginBottom: 0,
-    },
-    labelFocused: {
-        ...commonStyles.labelFocused,
-    },
-    required: {
-        color: theme.colors.asteriskPink,
-    },
-    input: {
-        ...commonStyles.inputBase,
-        backgroundColor: theme.colors.white,
-        marginTop: 0,
-        borderWidth: theme.spacing.borderWidth.thin,
-        borderColor: 'transparent',
-    },
-    inputFocused: {
-        ...commonStyles.inputFocused,
-    },
     dropdown: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: theme.spacing.inputHeight,
         backgroundColor: theme.colors.white,
-        borderRadius: theme.spacing.radius.base,
-        paddingHorizontal: theme.spacing.inputPaddingHorizontal,
-        paddingVertical: theme.spacing.inputPaddingVertical,
-        borderWidth: theme.spacing.borderWidth.thin,
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderWidth: 1,
         borderColor: 'transparent',
     },
     dropdownText: {
-        ...theme.typography.presets.body,
-        color: theme.colors.textSecondary,
+        fontSize: 16,
+        fontWeight: '400',
+        color: '#272727',
+        fontFamily: theme.typography.fontFamily.prompt,
         flex: 1,
     },
     placeholder: {
         color: theme.colors.textPlaceholder,
     },
-    buttonContainer: {
-        marginTop: theme.spacing.lg,
-        marginBottom: theme.spacing.formMarginBottom,
-        width: theme.spacing.buttonWidth,
-        alignSelf: 'center',
-    },
-    saveButton: {
-        ...commonStyles.buttonBase,
-        ...commonStyles.buttonPrimary,
-    },
-    saveButtonText: {
-        ...commonStyles.buttonTextPrimary,
-    },
+
 });
 
 export default ProfileInformationScreen;

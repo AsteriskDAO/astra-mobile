@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import BackgroundPattern from '../components/BackgroundPattern';
+import { theme } from '../theme/theme';
 
 const GenderVerificationScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: '#E91E63',
+        backgroundColor: theme.colors.asteriskPink,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     highlightedText: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#E91E63',
+        color: theme.colors.asteriskPink,
         textAlign: 'center',
         marginBottom: 16,
     },

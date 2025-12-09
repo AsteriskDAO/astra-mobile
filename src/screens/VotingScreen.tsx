@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import Logo from '../components/Logo';
-import BackButton from '../components/BackButton';
+import SecondaryHeader from '../components/SecondaryHeader';
 import BackgroundPattern from '../components/BackgroundPattern';
+import Button from '../components/Button';
 import { theme } from '../theme/theme';
 
 const VotingScreen: React.FC = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const insets = useSafeAreaInsets();
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [voteSubmitted, setVoteSubmitted] = useState(false);
     const username = 'username'; // This would come from user context
@@ -36,25 +34,17 @@ const VotingScreen: React.FC = () => {
         <View style={styles.container}>
             <BackgroundPattern />
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={[styles.header, { paddingTop: insets.top }]}>
-                    <BackButton
-                        onPress={() => navigation.goBack()}
-                        size={17}
-                        style={StyleSheet.flatten([styles.backButton, { top: insets.top }])}
-                    />
-                    <View style={styles.headerCenter}>
-                        <Text style={styles.headerTitle}>Your voice matters</Text>
-                        <Logo size={16} tintColor={theme.colors.asteriskPink} style={styles.asteriskLogo} />
-                    </View>
-                    <View style={[styles.headerRight, { top: insets.top }]}>
+                <SecondaryHeader
+                    title="Your voice matters"
+                    onBack={() => navigation.goBack()}
+                    rightElement={
                         <View style={styles.profileIconContainer}>
                             <View style={styles.profileIconCircle}>
                                 <View style={styles.profileIconInnerCircle} />
                             </View>
                         </View>
-                    </View>
-                </View>
+                    }
+                />
 
                 {/* Voting Card */}
                 <View style={styles.votingCard}>
@@ -96,16 +86,13 @@ const VotingScreen: React.FC = () => {
 
                             {/* Submit Button */}
                             <View style={styles.submitButtonContainer}>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.submitButton,
-                                        !selectedOption && styles.submitButtonDisabled
-                                    ]}
+                                <Button
+                                    title="Submit vote"
                                     onPress={handleSubmitVote}
+                                    variant="primary"
                                     disabled={!selectedOption}
-                                >
-                                    <Text style={styles.submitButtonText}>Submit vote</Text>
-                                </TouchableOpacity>
+                                    style={styles.submitButton}
+                                />
                             </View>
                         </>
                     ) : (
@@ -158,38 +145,6 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         paddingHorizontal: theme.spacing.contentPaddingHorizontal,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingBottom: theme.spacing.base,
-        marginBottom: theme.spacing.base,
-        position: 'relative',
-    },
-    backButton: {
-        position: 'absolute',
-        left: 0,
-    },
-    headerCenter: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
-    },
-    headerTitle: {
-        ...theme.typography.presets.h3,
-        color: theme.colors.textSecondary,
-        textAlign: 'center',
-    },
-    asteriskLogo: {
-        marginLeft: 2,
-    },
-    headerRight: {
-        position: 'absolute',
-        right: 0,
-        width: 14,
-        height: 14,
     },
     profileIconContainer: {
         width: 14,
@@ -284,24 +239,7 @@ const styles = StyleSheet.create({
     },
     submitButton: {
         width: 220,
-        height: 30,
-        backgroundColor: theme.colors.asteriskPink,
-        borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
         alignSelf: 'center',
-        borderWidth: 1,
-        borderColor: theme.colors.asteriskPink,
-    },
-    submitButtonDisabled: {
-        backgroundColor: '#C6C6C6',
-        borderColor: '#C6C6C6',
-    },
-    submitButtonText: {
-        ...theme.typography.presets.button,
-        color: theme.colors.white,
-        fontSize: 11,
-        lineHeight: 17,
     },
     thankYouContainer: {
         paddingHorizontal: theme.spacing.base,
