@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import SecondaryHeader from '../../components/SecondaryHeader';
@@ -7,20 +7,81 @@ import BackgroundPattern from '../../components/BackgroundPattern';
 import Toggle from '../../components/Toggle';
 import Input from '../../components/Input';
 import Label from '../../components/Label';
+import Button from '../../components/Button';
 import { theme } from '../../theme/theme';
+import { apiService } from '../../services/api';
+import { useApiCall } from '../../hooks/useApiCall';
 
 const NotificationsSettingsScreen: React.FC = () => {
     const navigation = useNavigation();
-    const [reminderFrequency, setReminderFrequency] = useState('Weekly');
+    const [reminderFrequency, setReminderFrequency] = useState<'daily' | 'specific_days' | 'weekly'>('weekly');
+    const [reminderDays, setReminderDays] = useState<string[]>([]);
     const [reminderDay, setReminderDay] = useState('');
     const [reminderTime, setReminderTime] = useState('');
     const [emailNotifications, setEmailNotifications] = useState(false);
     const [followSubstack, setFollowSubstack] = useState(false);
+    const [isActive, setIsActive] = useState(true);
     const [showFrequencyModal, setShowFrequencyModal] = useState(false);
     const [showDayModal, setShowDayModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const frequencyOptions = ['Daily', 'Weekly', 'Monthly'];
+    const { execute: saveSettings, isLoading: isSaving } = useApiCall({
+        showErrorAlert: true,
+        errorMessage: 'Failed to save settings',
+        onSuccess: () => {
+            Alert.alert('Success', 'Notification settings saved successfully');
+        },
+    });
+
+    const frequencyOptions: Array<{ label: string; value: 'daily' | 'specific_days' | 'weekly' }> = [
+        { label: 'Daily', value: 'daily' },
+        { label: 'Weekly', value: 'weekly' },
+        { label: 'Specific Days', value: 'specific_days' },
+    ];
     const dayOptions = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    useEffect(() => {
+        loadNotificationSettings();
+    }, []);
+
+    const loadNotificationSettings = async () => {
+        setIsLoading(true);
+        try {
+            // TODO: Uncomment API calls when ready
+            // const settings = await apiService.getNotificationSettings();
+            // setReminderFrequency(settings.reminder_schedule);
+            // setReminderDays(settings.reminder_days || []);
+            // if (settings.reminder_days && settings.reminder_days.length > 0) {
+            //     setReminderDay(settings.reminder_days[0]);
+            // }
+            // setReminderTime(settings.reminder_time || '');
+            // setEmailNotifications(settings.email_notifications);
+            // setFollowSubstack(settings.substack);
+            // setIsActive(settings.is_active);
+        } catch (error) {
+            console.error('Failed to load notification settings:', error);
+            // Settings will be created on first save
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSave = async () => {
+        // TODO: Uncomment API calls when ready
+        // await saveSettings(async () => {
+        //     return await apiService.updateNotificationSettings({
+        //         reminder_schedule: reminderFrequency,
+        //         reminder_days: reminderFrequency === 'specific_days' && reminderDay ? [reminderDay] : reminderDays,
+        //         reminder_time: reminderTime,
+        //         email_notifications: emailNotifications,
+        //         substack: followSubstack,
+        //         is_active: isActive,
+        //     });
+        // });
+        
+        // Temporary: Show success message for testing
+        Alert.alert('Success', 'Notification settings saved successfully');
+    };
 
     return (
         <View style={styles.container}>
@@ -39,25 +100,31 @@ const NotificationsSettingsScreen: React.FC = () => {
                         <TouchableOpacity
                             style={styles.dropdown}
                             onPress={() => setShowFrequencyModal(true)}
+                            disabled={isLoading}
                         >
-                            <Text style={styles.dropdownText}>{reminderFrequency}</Text>
-                            <Ionicons name="chevron-down" size={10} color="#9C9C9C" />
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Reminder Day */}
-                    <View style={styles.inputGroup}>
-                        <Label>Reminder Day</Label>
-                        <TouchableOpacity
-                            style={styles.dropdown}
-                            onPress={() => setShowDayModal(true)}
-                        >
-                            <Text style={[styles.dropdownText, !reminderDay && styles.placeholder]}>
-                                {reminderDay || 'Select a day'}
+                            <Text style={styles.dropdownText}>
+                                {frequencyOptions.find(opt => opt.value === reminderFrequency)?.label || reminderFrequency}
                             </Text>
                             <Ionicons name="chevron-down" size={10} color="#9C9C9C" />
                         </TouchableOpacity>
                     </View>
+
+                    {/* Reminder Day - only show if not daily */}
+                    {reminderFrequency !== 'daily' && (
+                        <View style={styles.inputGroup}>
+                            <Label>Reminder Day</Label>
+                            <TouchableOpacity
+                                style={styles.dropdown}
+                                onPress={() => setShowDayModal(true)}
+                                disabled={isLoading}
+                            >
+                                <Text style={[styles.dropdownText, !reminderDay && styles.placeholder]}>
+                                    {reminderDay || 'Select a day'}
+                                </Text>
+                                <Ionicons name="chevron-down" size={10} color="#9C9C9C" />
+                            </TouchableOpacity>
+                        </View>
+                    )}
 
                     {/* Preferred Reminder Time */}
                     <Input
@@ -84,6 +151,7 @@ const NotificationsSettingsScreen: React.FC = () => {
                         <Toggle
                             value={emailNotifications}
                             onValueChange={setEmailNotifications}
+                            disabled={isLoading}
                         />
                     </View>
 
@@ -98,8 +166,18 @@ const NotificationsSettingsScreen: React.FC = () => {
                         <Toggle
                             value={followSubstack}
                             onValueChange={setFollowSubstack}
+                            disabled={isLoading}
                         />
                     </View>
+                </View>
+
+                {/* Save Button */}
+                <View style={styles.saveButtonContainer}>
+                    <Button
+                        title={isSaving ? 'Saving...' : 'Save Settings'}
+                        onPress={handleSave}
+                        disabled={isSaving || isLoading}
+                    />
                 </View>
             </ScrollView>
 
@@ -118,14 +196,14 @@ const NotificationsSettingsScreen: React.FC = () => {
                     <View style={styles.modalContent}>
                         {frequencyOptions.map((option) => (
                             <TouchableOpacity
-                                key={option}
+                                key={option.value}
                                 style={styles.modalOption}
                                 onPress={() => {
-                                    setReminderFrequency(option);
+                                    setReminderFrequency(option.value);
                                     setShowFrequencyModal(false);
                                 }}
                             >
-                                <Text style={styles.modalOptionText}>{option}</Text>
+                                <Text style={styles.modalOptionText}>{option.label}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
@@ -236,6 +314,10 @@ const styles = StyleSheet.create({
         fontSize: 10,
         lineHeight: 12,
         color: theme.colors.textDisabled,
+    },
+    saveButtonContainer: {
+        marginTop: 20,
+        marginBottom: 20,
     },
     modalOverlay: {
         flex: 1,

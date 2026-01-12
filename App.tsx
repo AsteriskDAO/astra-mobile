@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import PersistentBottomNav from './src/components/PersistentBottomNav';
 import { TabProvider } from './src/contexts/TabContext';
+import { UserProvider } from './src/contexts/UserContext';
 
 // Import screens - Auth
 import SplashScreen from './src/screens/auth/SplashScreen';
@@ -15,13 +16,14 @@ import CreateAccountScreen from './src/screens/auth/CreateAccountScreen';
 import TelegramLoginScreen from './src/screens/auth/TelegramLoginScreen';
 
 // Verification
-import GenderVerificationScreen from './src/screens/verification/GenderVerificationScreen';
 import IDVerificationScreen from './src/screens/verification/IDVerificationScreen';
-import VerificationSuccessScreen from './src/screens/verification/VerificationSuccessScreen';
 import VerificationFailedScreen from './src/screens/verification/VerificationFailedScreen';
+import FinalVerificationSuccessScreen from './src/screens/verification/FinalVerificationSuccessScreen';
 
 // Profile
+import ProfileIntroScreen from './src/screens/profile/ProfileIntroScreen';
 import ProfileSetupScreen from './src/screens/profile/ProfileSetupScreen';
+import ProfileSavedScreen from './src/screens/profile/ProfileSavedScreen';
 import ProfileScreen from './src/screens/profile/ProfileScreen';
 import ProfileInformationScreen from './src/screens/profile/ProfileInformationScreen';
 import DayStreakScreen from './src/screens/profile/DayStreakScreen';
@@ -53,8 +55,9 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <SafeAreaProvider>
-      <TabProvider>
-        <View style={styles.container}>
+      <UserProvider>
+        <TabProvider>
+          <View style={styles.container}>
           <NavigationContainer>
             <StatusBar style="auto" />
             <Stack.Navigator
@@ -66,14 +69,15 @@ export default function App() {
             >
               <Stack.Screen name="Splash" component={SplashScreen} />
               <Stack.Screen name="Welcome" component={WelcomeScreen} />
-              <Stack.Screen name="GenderVerification" component={GenderVerificationScreen} />
               <Stack.Screen name="IDVerification" component={IDVerificationScreen} />
-              <Stack.Screen name="VerificationSuccess" component={VerificationSuccessScreen} />
               <Stack.Screen name="VerificationFailed" component={VerificationFailedScreen} />
+              <Stack.Screen name="FinalVerificationSuccess" component={FinalVerificationSuccessScreen} />
               <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="TelegramLogin" component={TelegramLoginScreen} />
+              <Stack.Screen name="ProfileIntro" component={ProfileIntroScreen} />
               <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
+              <Stack.Screen name="ProfileSaved" component={ProfileSavedScreen} />
 
               {/* Main container - handles tab switching without navigation */}
               <Stack.Screen name="MainContainer" component={MainContainerScreen} />
@@ -99,7 +103,8 @@ export default function App() {
             <PersistentBottomNav />
           </NavigationContainer>
         </View>
-      </TabProvider>
+        </TabProvider>
+      </UserProvider>
     </SafeAreaProvider>
   );
 }

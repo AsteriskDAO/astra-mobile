@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Input from '../../components/Input';
@@ -9,17 +9,60 @@ import BackButton from '../../components/BackButton';
 import { theme } from '../../theme/theme';
 import { commonStyles } from '../../styles/common';
 import { LAYOUT } from '../../constants/layout';
+import { apiService } from '../../services/api';
+import { useUser } from '../../contexts/UserContext';
+import { useApiCall } from '../../hooks/useApiCall';
+import { validateEmail, validateRequired } from '../../utils/validation';
 
 const LoginScreen: React.FC = () => {
     const navigation = useNavigation();
     const insets = useSafeAreaInsets();
+    const { setUser } = useUser();
     const [formData, setFormData] = useState({
-        email: 'email@asteriskdao.xyz',
-        password: '*****',
+        email: '',
+        password: '',
     });
 
-    const handleLogin = () => {
-        // Simulate login process
+    const { execute, isLoading } = useApiCall({
+        showErrorAlert: true,
+        errorMessage: 'Invalid credentials',
+        onSuccess: () => {
+            navigation.navigate('MainContainer' as never);
+        },
+    });
+
+    const handleLogin = async () => {
+        // Validate form
+        const emailValidation = validateEmail(formData.email);
+        if (!emailValidation.isValid) {
+            Alert.alert('Error', emailValidation.error);
+            return;
+        }
+
+        const passwordValidation = validateRequired(formData.password, 'Password');
+        if (!passwordValidation.isValid) {
+            Alert.alert('Error', passwordValidation.error);
+            return;
+        }
+
+        // Execute login
+        // TODO: Uncomment API calls when ready
+        // const response = await execute(async () => {
+        //     const loginResponse = await apiService.login({
+        //         email: formData.email,
+        //         password: formData.password,
+        //     });
+            
+        //     // Fetch full user data and save to context
+        //     if (loginResponse.user.userHash) {
+        //         const userData = await apiService.getUser(loginResponse.user.userHash);
+        //         setUser(userData);
+        //     }
+            
+        //     return loginResponse;
+        // });
+        
+        // Temporary: Navigate directly for testing
         navigation.navigate('MainContainer' as never);
     };
 
@@ -70,8 +113,9 @@ const LoginScreen: React.FC = () => {
                 {/* Third view - buttons */}
                 <View style={styles.buttonContainer}>
                     <Button
-                        title="Log in"
+                        title={isLoading ? "Logging in..." : "Log in"}
                         onPress={handleLogin}
+                        disabled={isLoading}
                     />
 
                     <Button

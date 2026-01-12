@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Label from '../../components/Label';
 import SecondaryHeader from '../../components/SecondaryHeader';
+import DiscardChangesModal from '../../components/modals/DiscardChangesModal';
+import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
+import { useFormState } from '../../hooks/useFormState';
 import { RootStackParamList } from '../../types/navigation';
 import { Medication } from '../../types/health';
 import { theme } from '../../theme/theme';
@@ -15,7 +18,9 @@ type AddMedicationScreenRouteProp = RouteProp<RootStackParamList, 'AddMedication
 const AddMedicationScreen: React.FC = () => {
     const navigation = useNavigation();
     const route = useRoute<AddMedicationScreenRouteProp>();
-    const [formData, setFormData] = useState({
+    const isEdit = route.params?.medication;
+    
+    const { formData, handleChange, hasChanges, setFormData } = useFormState({
         medicationName: '',
         startDate: '',
         type: '',
@@ -23,10 +28,9 @@ const AddMedicationScreen: React.FC = () => {
         frequency: '',
         notes: '',
     });
+    
+    const [showDiscardModal, setShowDiscardModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [hasChanges, setHasChanges] = useState(false);
-
-    const isEdit = route.params?.medication;
 
     useEffect(() => {
         if (isEdit) {
@@ -39,23 +43,18 @@ const AddMedicationScreen: React.FC = () => {
                 notes: isEdit.notes || '',
             });
         }
-    }, [isEdit]);
-
-    const handleInputChange = (field: string, value: string) => {
-        setFormData({ ...formData, [field]: value });
-        setHasChanges(true);
-    };
+    }, [isEdit, setFormData]);
 
     const handleBack = () => {
         if (hasChanges) {
-            setShowDeleteModal(true);
+            setShowDiscardModal(true);
         } else {
             navigation.goBack();
         }
     };
 
     const handleDiscard = () => {
-        setShowDeleteModal(false);
+        setShowDiscardModal(false);
         navigation.goBack();
     };
 
@@ -87,7 +86,7 @@ const AddMedicationScreen: React.FC = () => {
                     <Input
                         label="Medication Name"
                         value={formData.medicationName}
-                        onChangeText={(text) => handleInputChange('medicationName', text)}
+                        onChangeText={(text) => handleChange('medicationName', text)}
                         placeholder="Enter medication name"
                     />
 
@@ -134,7 +133,7 @@ const AddMedicationScreen: React.FC = () => {
                     <Input
                         label="Notes"
                         value={formData.notes}
-                        onChangeText={(text) => handleInputChange('notes', text)}
+                        onChangeText={(text) => handleChange('notes', text)}
                         placeholder="You can write anything relevant to this medication here"
                         multiline
                         numberOfLines={4}
@@ -152,7 +151,7 @@ const AddMedicationScreen: React.FC = () => {
                     {isEdit && (
                         <Button
                             title="Delete this medication"
-                            onPress={handleDelete}
+                            onPress={() => setShowDeleteModal(true)}
                             variant="outline"
                             style={styles.deleteButton}
                         />
@@ -160,35 +159,24 @@ const AddMedicationScreen: React.FC = () => {
                 </View>
             </ScrollView>
 
+            {/* Discard Changes Modal */}
+            <DiscardChangesModal
+                visible={showDiscardModal}
+                onDiscard={handleDiscard}
+                onCancel={() => setShowDiscardModal(false)}
+            />
+
             {/* Delete Confirmation Modal */}
-            <Modal
+            <DeleteConfirmationModal
                 visible={showDeleteModal}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setShowDeleteModal(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Delete medication?</Text>
-                        <Text style={styles.modalMessage}>
-                            You are about to delete the entire card for this medication. Are you sure?
-                        </Text>
-                        <View style={styles.modalButtons}>
-                            <Button
-                                title="Yes, delete"
-                                onPress={handleDelete}
-                                style={styles.deleteConfirmButton}
-                            />
-                            <Button
-                                title="Cancel"
-                                onPress={() => setShowDeleteModal(false)}
-                                variant="outline"
-                                style={styles.cancelButton}
-                            />
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+                title="Delete medication?"
+                message="You are about to delete the entire card for this medication. Are you sure?"
+                itemName={isEdit?.name}
+                onConfirm={handleDelete}
+                onCancel={() => setShowDeleteModal(false)}
+                confirmText="Yes, delete"
+                cancelText="Cancel"
+            />
         </View>
     );
 };
@@ -243,45 +231,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 24,
-        width: '100%',
-        maxWidth: 400,
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333333',
-        marginBottom: 12,
-        textAlign: 'center',
-    },
-    modalMessage: {
-        fontSize: 14,
-        color: '#666666',
-        lineHeight: 20,
-        marginBottom: 24,
-        textAlign: 'center',
-    },
-    modalButtons: {
-        gap: 12,
-    },
-    deleteConfirmButton: {
-        backgroundColor: theme.colors.asteriskPink,
-    },
-    cancelButton: {
-        backgroundColor: 'white',
-        borderColor: theme.colors.asteriskPink,
-        borderWidth: 1,
     },
 });
 

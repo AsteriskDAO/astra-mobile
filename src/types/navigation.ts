@@ -6,14 +6,15 @@ import { Condition, Medication, Treatment } from './health';
 export type RootStackParamList = {
     Splash: undefined;
     Welcome: undefined;
-    GenderVerification: undefined;
     IDVerification: undefined;
-    VerificationSuccess: undefined;
     VerificationFailed: undefined;
+    FinalVerificationSuccess: undefined;
     CreateAccount: undefined;
     Login: undefined;
     TelegramLogin: undefined;
+    ProfileIntro: undefined;
     ProfileSetup: undefined;
+    ProfileSaved: undefined;
     MainContainer: undefined;
     Profile: undefined;
     ProfileInformation: undefined;

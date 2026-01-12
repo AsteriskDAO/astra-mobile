@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '../../components/Header';
@@ -10,18 +10,68 @@ import BackButton from '../../components/BackButton';
 import { theme } from '../../theme/theme';
 import { commonStyles } from '../../styles/common';
 import { LAYOUT } from '../../constants/layout';
+import { apiService } from '../../services/api';
+import { useUser } from '../../contexts/UserContext';
+import { useApiCall } from '../../hooks/useApiCall';
+import { validateEmail, validatePassword, validatePasswordMatch } from '../../utils/validation';
 
 const CreateAccountScreen: React.FC = () => {
     const navigation = useNavigation();
     const insets = useSafeAreaInsets();
+    const { setUser } = useUser();
     const [formData, setFormData] = useState({
-        email: 'email@asteriskdao.xyz',
-        password: '*****',
-        confirmPassword: '*****',
+        email: '',
+        password: '',
+        confirmPassword: '',
     });
 
-    const handleNext = () => {
-        navigation.navigate('IDVerification' as never);
+    const { execute, isLoading } = useApiCall({
+        showErrorAlert: true,
+        errorMessage: 'Failed to create account',
+        onSuccess: () => {
+            navigation.navigate('ProfileIntro' as never);
+        },
+    });
+
+    const handleNext = async () => {
+        // Validate form
+        const emailValidation = validateEmail(formData.email);
+        if (!emailValidation.isValid) {
+            Alert.alert('Error', emailValidation.error);
+            return;
+        }
+
+        const passwordValidation = validatePassword(formData.password);
+        if (!passwordValidation.isValid) {
+            Alert.alert('Error', passwordValidation.error);
+            return;
+        }
+
+        const passwordMatchValidation = validatePasswordMatch(formData.password, formData.confirmPassword);
+        if (!passwordMatchValidation.isValid) {
+            Alert.alert('Error', passwordMatchValidation.error);
+            return;
+        }
+
+        // Execute registration
+        // TODO: Uncomment API calls when ready
+        // await execute(async () => {
+        //     const response = await apiService.register({
+        //         email: formData.email,
+        //         password: formData.password,
+        //     });
+
+        //     // Fetch full user data and save to context
+        //     if (response.user.userHash) {
+        //         const userData = await apiService.getUser(response.user.userHash);
+        //         setUser(userData);
+        //     }
+
+        //     return response;
+        // });
+
+        // Temporary: Navigate directly for testing
+        navigation.navigate('ProfileIntro' as never);
     };
 
     return (
@@ -67,7 +117,7 @@ const CreateAccountScreen: React.FC = () => {
 
                             <Input
                                 label="Password"
-                                placeholder="*****"
+                                placeholder="Enter password (min 8 characters)"
                                 value={formData.password}
                                 onChangeText={(text) => setFormData({ ...formData, password: text })}
                                 secureTextEntry
@@ -76,7 +126,7 @@ const CreateAccountScreen: React.FC = () => {
 
                             <Input
                                 label="Confirm Password"
-                                placeholder="*****"
+                                placeholder="Confirm your password"
                                 value={formData.confirmPassword}
                                 onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
                                 secureTextEntry
@@ -89,9 +139,10 @@ const CreateAccountScreen: React.FC = () => {
                 {/* Third view - button */}
                 <View style={styles.buttonContainer}>
                     <Button
-                        title="Next"
+                        title={isLoading ? "Creating account..." : "Next"}
                         onPress={handleNext}
                         variant="outline"
+                        disabled={isLoading}
                     />
                 </View>
             </View>
@@ -124,7 +175,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        paddingBottom: 20,
+        paddingBottom: 100,
     },
     titleContainer: {
         alignItems: 'center',
@@ -147,8 +198,7 @@ const styles = StyleSheet.create({
         marginBottom: theme.spacing.lg,
     },
     buttonContainer: {
-        flex: 1,
-        justifyContent: 'flex-end',
+        paddingTop: theme.spacing.md,
         width: '100%',
     },
 });

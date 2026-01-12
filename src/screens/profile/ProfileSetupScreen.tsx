@@ -22,8 +22,8 @@ const ProfileSetupScreen: React.FC = () => {
         healthConditions: '',
         medications: '',
         treatments: '',
-        caretaker: 'Kids',
-        trialsParticipation: false,
+        caretaker: '',
+        trialsParticipation: null as boolean | null,
     });
 
     const totalSteps = 9;
@@ -32,7 +32,7 @@ const ProfileSetupScreen: React.FC = () => {
         if (currentStep < totalSteps) {
             setCurrentStep(currentStep + 1);
         } else {
-            navigation.navigate('MainContainer' as never);
+            navigation.navigate('ProfileSaved' as never);
         }
     };
 
@@ -138,50 +138,35 @@ const ProfileSetupScreen: React.FC = () => {
 
             case 5:
                 return (
-                    <>
-                        <Input
-                            placeholder="Start typing"
-                            value={profileData.healthConditions}
-                            onChangeText={(text) => setProfileData({ ...profileData, healthConditions: text })}
-                            multiline
-                            numberOfLines={3}
-                        />
-                        <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
-                            <Text style={styles.skipText}>Skip for now</Text>
-                        </TouchableOpacity>
-                    </>
+                    <Input
+                        placeholder="Start typing"
+                        value={profileData.healthConditions}
+                        onChangeText={(text) => setProfileData({ ...profileData, healthConditions: text })}
+                        multiline
+                        numberOfLines={3}
+                    />
                 );
 
             case 6:
                 return (
-                    <>
-                        <Input
-                            placeholder="Start typing"
-                            value={profileData.medications}
-                            onChangeText={(text) => setProfileData({ ...profileData, medications: text })}
-                            multiline
-                            numberOfLines={3}
-                        />
-                        <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
-                            <Text style={styles.skipText}>Skip for now</Text>
-                        </TouchableOpacity>
-                    </>
+                    <Input
+                        placeholder="Start typing"
+                        value={profileData.medications}
+                        onChangeText={(text) => setProfileData({ ...profileData, medications: text })}
+                        multiline
+                        numberOfLines={3}
+                    />
                 );
 
             case 7:
                 return (
-                    <>
-                        <Input
-                            placeholder="Start typing"
-                            value={profileData.treatments}
-                            onChangeText={(text) => setProfileData({ ...profileData, treatments: text })}
-                            multiline
-                            numberOfLines={3}
-                        />
-                        <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
-                            <Text style={styles.skipText}>Skip for now</Text>
-                        </TouchableOpacity>
-                    </>
+                    <Input
+                        placeholder="Start typing"
+                        value={profileData.treatments}
+                        onChangeText={(text) => setProfileData({ ...profileData, treatments: text })}
+                        multiline
+                        numberOfLines={3}
+                    />
                 );
 
             case 8:
@@ -215,13 +200,13 @@ const ProfileSetupScreen: React.FC = () => {
                                 key={option}
                                 style={[
                                     styles.optionButton,
-                                    (profileData.trialsParticipation && option === 'Yes') || (!profileData.trialsParticipation && option === 'No') ? styles.selectedOptionButton : null
+                                    (profileData.trialsParticipation === true && option === 'Yes') || (profileData.trialsParticipation === false && option === 'No') ? styles.selectedOptionButton : null
                                 ]}
                                 onPress={() => setProfileData({ ...profileData, trialsParticipation: option === 'Yes' })}
                             >
                                 <Text style={[
                                     styles.optionText,
-                                    (profileData.trialsParticipation && option === 'Yes') || (!profileData.trialsParticipation && option === 'No') ? styles.selectedOptionText : null
+                                    (profileData.trialsParticipation === true && option === 'Yes') || (profileData.trialsParticipation === false && option === 'No') ? styles.selectedOptionText : null
                                 ]}>
                                     {option}
                                 </Text>
@@ -272,7 +257,13 @@ const ProfileSetupScreen: React.FC = () => {
                         title="Next"
                         onPress={handleNext}
                         variant="outline"
+                        disabled={(currentStep === 8 && !profileData.caretaker) || (currentStep === 9 && profileData.trialsParticipation === null)}
                     />
+                    {(currentStep === 5 || currentStep === 6 || currentStep === 7) && (
+                        <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
+                            <Text style={styles.skipText}>Skip for now</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
         </View>
@@ -385,7 +376,7 @@ const styles = StyleSheet.create({
     },
     skipLink: {
         alignSelf: 'center',
-        marginTop: 40,
+        marginTop: theme.spacing.md,
     },
     skipText: {
         fontSize: 11,
@@ -399,6 +390,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
         width: '100%',
+        paddingTop: theme.spacing.md,
     },
 });
 

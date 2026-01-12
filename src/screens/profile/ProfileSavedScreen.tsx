@@ -6,7 +6,7 @@ import BackgroundPattern from '../../components/BackgroundPattern';
 import { theme } from '../../theme/theme';
 import { commonStyles } from '../../styles/common';
 
-const VerificationSuccessScreen: React.FC = () => {
+const ProfileSavedScreen: React.FC = () => {
     const navigation = useNavigation();
 
     return (
@@ -19,9 +19,9 @@ const VerificationSuccessScreen: React.FC = () => {
                 {/* Second view - content (title and description) */}
                 <View style={styles.contentSection}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.title}>All verified!</Text>
+                        <Text style={styles.title}>All set! Your profile info has been saved</Text>
                         <Text style={styles.description}>
-                            Let's get your profile set up so Astra understands your health status and helps you track your menstrual cycle.
+                            You can always edit your profile information in your account.
                         </Text>
                     </View>
                 </View>
@@ -30,7 +30,7 @@ const VerificationSuccessScreen: React.FC = () => {
                 <View style={styles.buttonContainer}>
                     <Button
                         title="Continue"
-                        onPress={() => navigation.navigate('ProfileSetup' as never)}
+                        onPress={() => navigation.navigate('IDVerification' as never)}
                         variant="outline"
                     />
                 </View>
@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
         ...theme.typography.presets.h2,
         color: theme.colors.textPrimary,
         textAlign: 'center',
-        // maxWidth: theme.spacing.spacing269,
         alignSelf: 'center',
     },
     buttonContainer: {
@@ -79,5 +78,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default VerificationSuccessScreen;
+export default ProfileSavedScreen;
 

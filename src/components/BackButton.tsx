@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleSheet, TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { theme } from '../theme/theme';
 
 interface BackButtonProps {
     onPress: () => void;
     size?: number;
-    style?: ViewStyle;
+    style?: StyleProp<ViewStyle>;
     color?: string;
 }
 

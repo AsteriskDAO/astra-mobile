@@ -41,7 +41,7 @@ const Button: React.FC<ButtonProps> = ({
                 <Ionicons
                     name={icon.name}
                     size={icon.size || 20}
-                    color={icon.color || (disabled ? theme.colors.buttonDisabledText : (variant === 'outline' ? theme.colors.asteriskPink : theme.colors.buttonPrimaryText))}
+                    color={icon.color || (disabled ? theme.colors.buttonDisabledBorder : (variant === 'outline' ? theme.colors.asteriskPink : theme.colors.buttonPrimaryText))}
                 />
             );
 
@@ -49,7 +49,11 @@ const Button: React.FC<ButtonProps> = ({
                 <View style={styles.iconButtonContent}>
                     {icon.position === 'right' ? (
                         <>
-                            <Text style={[styles.text, styles[`${variant}Text`], disabled && styles.disabledText, textStyle]}>
+                            <Text style={[
+                                styles.text,
+                                disabled && variant !== 'primary' ? styles.disabledText : styles[`${variant}Text`],
+                                textStyle
+                            ]}>
                                 {title}
                             </Text>
                             {iconElement}
@@ -57,7 +61,11 @@ const Button: React.FC<ButtonProps> = ({
                     ) : (
                         <>
                             {iconElement}
-                            <Text style={[styles.text, styles[`${variant}Text`], disabled && styles.disabledText, textStyle]}>
+                            <Text style={[
+                                styles.text,
+                                disabled && variant !== 'primary' ? styles.disabledText : styles[`${variant}Text`],
+                                textStyle
+                            ]}>
                                 {title}
                             </Text>
                         </>
@@ -67,8 +75,13 @@ const Button: React.FC<ButtonProps> = ({
         }
 
         if (title) {
+            // For disabled buttons: primary keeps white text, outline/secondary use grey text
             return (
-                <Text style={[styles.text, styles[`${variant}Text`], disabled && styles.disabledText, textStyle]}>
+                <Text style={[
+                    styles.text,
+                    disabled && variant !== 'primary' ? styles.disabledText : styles[`${variant}Text`],
+                    textStyle
+                ]}>
                     {title}
                 </Text>
             );
@@ -77,14 +90,43 @@ const Button: React.FC<ButtonProps> = ({
         return null;
     };
 
-    return (
-        <TouchableOpacity
-            style={[
+    const getButtonStyle = () => {
+        if (disabled) {
+            if (disabledBackgroundColor) {
+                return [
+                    styles.button,
+                    styles[variant],
+                    { backgroundColor: disabledBackgroundColor },
+                    variant === 'outline' && { borderColor: theme.colors.buttonDisabledBorder },
+                    style,
+                ];
+            }
+            // For outline variant, keep white background when disabled
+            if (variant === 'outline') {
+                return [
+                    styles.button,
+                    styles[variant],
+                    styles.disabledOutline,
+                    style,
+                ];
+            }
+            return [
                 styles.button,
                 styles[variant],
-                disabled && (disabledBackgroundColor ? { backgroundColor: disabledBackgroundColor } : styles.disabled),
+                styles.disabled,
                 style,
-            ]}
+            ];
+        }
+        return [
+            styles.button,
+            styles[variant],
+            style,
+        ];
+    };
+
+    return (
+        <TouchableOpacity
+            style={getButtonStyle()}
             onPress={onPress}
             disabled={disabled}
         >
@@ -116,6 +158,9 @@ const styles = StyleSheet.create({
     disabled: {
         backgroundColor: theme.colors.buttonDisabled,
         opacity: 1,
+    },
+    disabledOutline: {
+        borderColor: theme.colors.buttonDisabledBorder,
     },
     text: {
         ...theme.typography.presets.button,

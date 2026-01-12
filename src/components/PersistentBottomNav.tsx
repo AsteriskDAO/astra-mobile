@@ -41,14 +41,15 @@ const PersistentBottomNav: React.FC = () => {
     const hideBottomNavRoutes = [
         'Splash',
         'Welcome',
-        'GenderVerification',
         'IDVerification',
-        'VerificationSuccess',
         'VerificationFailed',
+        'FinalVerificationSuccess',
         'CreateAccount',
         'Login',
         'TelegramLogin',
+        'ProfileIntro',
         'ProfileSetup',
+        'ProfileSaved',
     ];
 
     const shouldShowNav = routeName && !hideBottomNavRoutes.includes(routeName);

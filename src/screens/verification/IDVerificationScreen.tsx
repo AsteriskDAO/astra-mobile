@@ -87,8 +87,9 @@ const IDVerificationScreen: React.FC = () => {
                         title="Verify my ID"
                         onPress={() => {
                             // Simulate verification process - wait 1 second
+                            // TODO: Add Self integration here
                             setTimeout(() => {
-                                navigation.navigate('VerificationSuccess' as never);
+                                navigation.navigate('FinalVerificationSuccess' as never);
                             }, 1000);
                         }}
                         variant="outline"

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Pressable, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import SecondaryHeader from '../../components/SecondaryHeader';
@@ -8,6 +8,10 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { theme } from '../../theme/theme';
 import { LAYOUT } from '../../constants/layout';
+import { apiService } from '../../services/api';
+import { useUser } from '../../contexts/UserContext';
+import { useApiCall } from '../../hooks/useApiCall';
+import { validateRequired } from '../../utils/validation';
 
 type FeedbackType = 'Bug Report' | 'General Feedback' | 'Feature Request';
 
@@ -19,6 +23,7 @@ interface FeedbackTypeConfig {
 
 const AppFeedbackScreen: React.FC = () => {
     const navigation = useNavigation();
+    const { userHash } = useUser();
     const [feedbackType, setFeedbackType] = useState<FeedbackType>('Bug Report');
     const [feedbackText, setFeedbackText] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
@@ -45,12 +50,36 @@ const AppFeedbackScreen: React.FC = () => {
 
     const currentConfig = feedbackConfigs[feedbackType];
 
-    const handleSubmit = () => {
-        if (feedbackText.trim()) {
-            // TODO: Implement feedback submission logic
-            // Show success message and navigate back
-            navigation.goBack();
+    const { execute, isLoading: isSubmitting } = useApiCall({
+        showErrorAlert: true,
+        errorMessage: 'Failed to submit feedback',
+        onSuccess: () => {
+            Alert.alert('Success', 'Thank you for your feedback!', [
+                { text: 'OK', onPress: () => navigation.goBack() }
+            ]);
+        },
+    });
+
+    const handleSubmit = async () => {
+        const validation = validateRequired(feedbackText, 'Feedback');
+        if (!validation.isValid) {
+            Alert.alert('Error', validation.error);
+            return;
         }
+
+        // TODO: Uncomment API calls when ready
+        // await execute(async () => {
+        //     return await apiService.createFeedback({
+        //         type: feedbackType,
+        //         message: feedbackText,
+        //         user_hash: userHash || undefined,
+        //     });
+        // });
+        
+        // Temporary: Show success message for testing
+        Alert.alert('Success', 'Thank you for your feedback!', [
+            { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
     };
 
     return (
@@ -94,8 +123,9 @@ const AppFeedbackScreen: React.FC = () => {
                 {/* Submit Button */}
                 <View style={styles.buttonContainer}>
                     <Button
-                        title="Share with Astra"
+                        title={isSubmitting ? 'Submitting...' : 'Share with Astra'}
                         onPress={handleSubmit}
+                        disabled={isSubmitting}
                     />
                 </View>
             </ScrollView>

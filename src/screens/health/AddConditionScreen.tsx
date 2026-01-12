@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Label from '../../components/Label';
 import SecondaryHeader from '../../components/SecondaryHeader';
+import DiscardChangesModal from '../../components/modals/DiscardChangesModal';
+import { useFormState } from '../../hooks/useFormState';
 import { RootStackParamList } from '../../types/navigation';
 import { Condition } from '../../types/health';
 import { theme } from '../../theme/theme';
@@ -15,17 +17,17 @@ type AddConditionScreenRouteProp = RouteProp<RootStackParamList, 'AddConditionSc
 const AddConditionScreen: React.FC = () => {
     const navigation = useNavigation();
     const route = useRoute<AddConditionScreenRouteProp>();
-    const [formData, setFormData] = useState({
+    const isEdit = route.params?.condition;
+    
+    const { formData, handleChange, hasChanges, setFormData } = useFormState({
         conditionName: '',
         dateDiagnosed: '',
         type: '',
         status: '',
         notes: '',
     });
+    
     const [showDiscardModal, setShowDiscardModal] = useState(false);
-    const [hasChanges, setHasChanges] = useState(false);
-
-    const isEdit = route.params?.condition;
 
     useEffect(() => {
         if (isEdit) {
@@ -37,12 +39,7 @@ const AddConditionScreen: React.FC = () => {
                 notes: isEdit.notes || '',
             });
         }
-    }, [isEdit]);
-
-    const handleInputChange = (field: string, value: string) => {
-        setFormData({ ...formData, [field]: value });
-        setHasChanges(true);
-    };
+    }, [isEdit, setFormData]);
 
     const handleBack = () => {
         if (hasChanges) {
@@ -80,7 +77,7 @@ const AddConditionScreen: React.FC = () => {
                     <Input
                         label="Condition Name"
                         value={formData.conditionName}
-                        onChangeText={(text) => handleInputChange('conditionName', text)}
+                        onChangeText={(text) => handleChange('conditionName', text)}
                         placeholder="Start typing"
                     />
 
@@ -117,7 +114,7 @@ const AddConditionScreen: React.FC = () => {
                     <Input
                         label="Notes"
                         value={formData.notes}
-                        onChangeText={(text) => handleInputChange('notes', text)}
+                        onChangeText={(text) => handleChange('notes', text)}
                         placeholder="You can write anything relevant to your condition here"
                         multiline
                         numberOfLines={4}
@@ -135,34 +132,11 @@ const AddConditionScreen: React.FC = () => {
             </ScrollView>
 
             {/* Discard Changes Modal */}
-            <Modal
+            <DiscardChangesModal
                 visible={showDiscardModal}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setShowDiscardModal(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Discard changes?</Text>
-                        <Text style={styles.modalMessage}>
-                            You have unsaved changes to your profile. Are you sure you want to go back?
-                        </Text>
-                        <View style={styles.modalButtons}>
-                            <Button
-                                title="Discard"
-                                onPress={handleDiscard}
-                                style={styles.discardButton}
-                            />
-                            <Button
-                                title="Cancel"
-                                onPress={() => setShowDiscardModal(false)}
-                                variant="outline"
-                                style={styles.cancelButton}
-                            />
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+                onDiscard={handleDiscard}
+                onCancel={() => setShowDiscardModal(false)}
+            />
         </View>
     );
 };
@@ -208,45 +182,6 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         backgroundColor: theme.colors.asteriskPink,
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 24,
-        width: '100%',
-        maxWidth: 400,
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333333',
-        marginBottom: 12,
-        textAlign: 'center',
-    },
-    modalMessage: {
-        fontSize: 14,
-        color: '#666666',
-        lineHeight: 20,
-        marginBottom: 24,
-        textAlign: 'center',
-    },
-    modalButtons: {
-        gap: 12,
-    },
-    discardButton: {
-        backgroundColor: theme.colors.asteriskPink,
-    },
-    cancelButton: {
-        backgroundColor: 'white',
-        borderColor: theme.colors.asteriskPink,
-        borderWidth: 1,
     },
 });
 

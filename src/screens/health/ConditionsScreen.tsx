@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import SecondaryHeader from '../../components/SecondaryHeader';
+import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
 import { Condition } from '../../types/health';
 import { theme } from '../../theme/theme';
 
@@ -128,34 +129,19 @@ const ConditionsScreen: React.FC = () => {
             </ScrollView>
 
             {/* Delete Confirmation Modal */}
-            <Modal
+            <DeleteConfirmationModal
                 visible={showDeleteModal}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setShowDeleteModal(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Delete condition?</Text>
-                        <Text style={styles.modalMessage}>
-                            You are about to delete the entire card for this condition. Are you sure?
-                        </Text>
-                        <View style={styles.modalButtons}>
-                            <Button
-                                title="Yes, delete"
-                                onPress={confirmDelete}
-                                style={styles.deleteConfirmButton}
-                            />
-                            <Button
-                                title="Cancel"
-                                onPress={() => setShowDeleteModal(false)}
-                                variant="outline"
-                                style={styles.cancelButton}
-                            />
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+                title="Delete condition?"
+                message="You are about to delete the entire card for this condition. Are you sure?"
+                itemName={selectedCondition?.name}
+                onConfirm={confirmDelete}
+                onCancel={() => {
+                    setShowDeleteModal(false);
+                    setSelectedCondition(null);
+                }}
+                confirmText="Yes, delete"
+                cancelText="Cancel"
+            />
         </View>
     );
 };
@@ -233,45 +219,6 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         backgroundColor: theme.colors.asteriskPink,
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 24,
-        width: '100%',
-        maxWidth: 400,
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333333',
-        marginBottom: 12,
-        textAlign: 'center',
-    },
-    modalMessage: {
-        fontSize: 14,
-        color: '#666666',
-        lineHeight: 20,
-        marginBottom: 24,
-        textAlign: 'center',
-    },
-    modalButtons: {
-        gap: 12,
-    },
-    deleteConfirmButton: {
-        backgroundColor: theme.colors.asteriskPink,
-    },
-    cancelButton: {
-        backgroundColor: 'white',
-        borderColor: theme.colors.asteriskPink,
-        borderWidth: 1,
     },
 });
 

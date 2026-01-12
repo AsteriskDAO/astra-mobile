@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     KeyboardAvoidingView,
     Platform,
-    Image
+    Image,
+    Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,6 +16,10 @@ import Input from '../../components/Input';
 import { Ionicons } from '@expo/vector-icons';
 import { useFixedHeaderHeight } from '../../hooks/useFixedHeaderHeight';
 import { theme } from '../../theme/theme';
+import { apiService } from '../../services/api';
+import { useUser } from '../../contexts/UserContext';
+import { useApiCall } from '../../hooks/useApiCall';
+import { getErrorMessage } from '../../utils/errorHandling';
 
 interface Message {
     id: string;
@@ -27,6 +32,7 @@ const DailyCheckinScreen: React.FC = () => {
     const navigation = useNavigation();
     const headerHeight = useFixedHeaderHeight();
     const insets = useSafeAreaInsets();
+    const { userHash, refreshUser } = useUser();
     const [isInputFocused, setIsInputFocused] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -35,15 +41,16 @@ const DailyCheckinScreen: React.FC = () => {
             isUser: false,
             timestamp: new Date(),
         },
-        {
-            id: '2',
-            text: "I'm doing alright",
-            isUser: true,
-            timestamp: new Date(),
-        },
     ]);
     const [inputText, setInputText] = useState('');
-    const [isTyping, setIsTyping] = useState(true);
+    const [isTyping, setIsTyping] = useState(false);
+    const [checkInData, setCheckInData] = useState({
+        mood: '',
+        health_comment: '',
+        anxiety_level: undefined as number | undefined,
+        pain_level: undefined as number | undefined,
+        fatigue_level: undefined as number | undefined,
+    });
 
     const handleSend = () => {
         if (inputText.trim()) {
@@ -54,7 +61,15 @@ const DailyCheckinScreen: React.FC = () => {
                 timestamp: new Date(),
             };
 
-            setMessages([...messages, newMessage]);
+            // Extract check-in data from user messages
+            const lowerText = inputText.toLowerCase();
+            if (lowerText.includes('mood') || lowerText.includes('feeling')) {
+                setCheckInData(prev => ({ ...prev, mood: inputText }));
+            } else {
+                setCheckInData(prev => ({ ...prev, health_comment: prev.health_comment ? `${prev.health_comment} ${inputText}` : inputText }));
+            }
+
+            setMessages(prev => [...prev, newMessage]);
             setInputText('');
 
             // Simulate bot response
@@ -62,7 +77,7 @@ const DailyCheckinScreen: React.FC = () => {
             setTimeout(() => {
                 const botResponse: Message = {
                     id: (Date.now() + 1).toString(),
-                    text: "That's great to hear! Is there anything specific you'd like to track today?",
+                    text: "Thanks for sharing! Anything else you'd like to note about your health today?",
                     isUser: false,
                     timestamp: new Date(),
                 };
@@ -70,6 +85,47 @@ const DailyCheckinScreen: React.FC = () => {
                 setIsTyping(false);
             }, 2000);
         }
+    };
+
+    const { execute, isLoading: isSubmitting } = useApiCall({
+        showErrorAlert: false, // We'll handle errors manually for specific messages
+        onSuccess: async () => {
+            await refreshUser();
+            Alert.alert('Success', 'Check-in submitted successfully!', [
+                { text: 'OK', onPress: () => navigation.goBack() }
+            ]);
+        },
+        onError: (error) => {
+            const errorMessage = getErrorMessage(error, 'Failed to submit check-in');
+            if (errorMessage.includes('Already checked in today')) {
+                Alert.alert('Already Checked In', 'You have already checked in today.');
+            } else {
+                Alert.alert('Error', errorMessage);
+            }
+        },
+    });
+
+    const handleSubmitCheckIn = async () => {
+        if (!userHash) {
+            Alert.alert('Error', 'User not found. Please log in again.');
+            return;
+        }
+
+        // TODO: Uncomment API calls when ready
+        // await execute(async () => {
+        //     return await apiService.createCheckIn(userHash, {
+        //         mood: checkInData.mood || undefined,
+        //         health_comment: checkInData.health_comment || undefined,
+        //         anxiety_level: checkInData.anxiety_level,
+        //         pain_level: checkInData.pain_level,
+        //         fatigue_level: checkInData.fatigue_level,
+        //     });
+        // });
+        
+        // Temporary: Show success message for testing
+        Alert.alert('Success', 'Check-in submitted successfully!', [
+            { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
     };
 
     const renderMessage = (message: Message) => (
@@ -142,14 +198,31 @@ const DailyCheckinScreen: React.FC = () => {
                         inputStyle={styles.textInput}
                         onFocus={() => setIsInputFocused(true)}
                         onBlur={() => setIsInputFocused(false)}
+                        editable={!isSubmitting}
                     />
                 </View>
-                <TouchableOpacity style={styles.micButton}>
+                <TouchableOpacity style={styles.micButton} disabled={isSubmitting}>
                     <Ionicons name="mic" size={20} color={theme.colors.ocean} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-                    <Text style={styles.sendButtonText}>Send</Text>
-                </TouchableOpacity>
+                {messages.length > 1 ? (
+                    <TouchableOpacity 
+                        style={[styles.sendButton, isSubmitting && styles.sendButtonDisabled]} 
+                        onPress={handleSubmitCheckIn}
+                        disabled={isSubmitting}
+                    >
+                        <Text style={styles.sendButtonText}>
+                            {isSubmitting ? 'Submitting...' : 'Submit'}
+                        </Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity 
+                        style={styles.sendButton} 
+                        onPress={handleSend}
+                        disabled={isSubmitting}
+                    >
+                        <Text style={styles.sendButtonText}>Send</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </KeyboardAvoidingView>
     );
@@ -248,6 +321,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    sendButtonSecondary: {
+        backgroundColor: theme.colors.ocean,
+    },
+    sendButtonDisabled: {
+        opacity: 0.6,
     },
     sendButtonText: {
         color: 'white',

@@ -1,36 +1,180 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import BackgroundPattern from '../../components/BackgroundPattern';
 import SecondaryHeader from '../../components/SecondaryHeader';
 import Button from '../../components/Button';
 import { theme } from '../../theme/theme';
 import { LAYOUT } from '../../constants/layout';
+import { apiService } from '../../services/api';
+import { useUser } from '../../contexts/UserContext';
+import { useApiCall } from '../../hooks/useApiCall';
+
+interface ResearchInvite {
+    id: string;
+    title: string;
+    message: string;
+    type?: string;
+    client: string;
+    link: string;
+    isPrivate: boolean;
+}
 
 const ResearchInviteScreen: React.FC = () => {
     const navigation = useNavigation();
+    const route = useRoute();
+    const { userHash } = useUser();
+    const [invite, setInvite] = useState<ResearchInvite | null>(null);
     const [hasResponded, setHasResponded] = useState(false);
     const [isInterested, setIsInterested] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [userStatus, setUserStatus] = useState<any>(null);
 
-    // In a real app, this would come from user context/state
-    const username = 'User'; // Replace with actual username
+    const { execute: executeResponse, isLoading: isSubmitting } = useApiCall({
+        showErrorAlert: true,
+        errorMessage: 'Failed to submit response',
+        onSuccess: async () => {
+            if (invite) {
+                await loadUserStatus(invite.id);
+            }
+        },
+    });
 
-    const handleCountMeIn = () => {
-        setHasResponded(true);
-        setIsInterested(true);
-        // In a real app, this would make an API call to register interest
+    // Get invite ID from route params or use a default
+    const inviteId = (route.params as any)?.inviteId || null;
+
+    useEffect(() => {
+        loadInvite();
+    }, [inviteId]);
+
+    const loadInvite = async () => {
+        if (!inviteId) {
+            // If no invite ID, try to get the first available invite
+            try {
+                // TODO: Uncomment API calls when ready
+                // const invites = await apiService.getResearchInvites();
+                // if (invites.length > 0) {
+                //     setInvite(invites[0]);
+                //     await loadUserStatus(invites[0].id);
+                // }
+            } catch (error) {
+                console.error('Failed to load invites:', error);
+            } finally {
+                setIsLoading(false);
+            }
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            // TODO: Uncomment API calls when ready
+            // const inviteData = await apiService.getResearchInviteById(inviteId);
+            // setInvite(inviteData);
+            // await loadUserStatus(inviteId);
+        } catch (error) {
+            Alert.alert('Error', 'Failed to load research invite');
+            console.error('Failed to load invite:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleNotInterested = () => {
+    const loadUserStatus = async (id: string) => {
+        if (!userHash) return;
+        
+        try {
+            // TODO: Uncomment API calls when ready
+            // const status = await apiService.getResearchInviteUserStatus(id, userHash);
+            // setUserStatus(status);
+            // setHasResponded(status.hasResponded);
+            // if (status.hasResponded) {
+            //     setIsInterested(status.response === 'yes');
+            // }
+        } catch (error) {
+            console.error('Failed to load user status:', error);
+        }
+    };
+
+    const handleCountMeIn = async () => {
+        if (!invite || !userHash) {
+            Alert.alert('Error', 'User information not available');
+            return;
+        }
+
+        // TODO: Uncomment API calls when ready
+        // await executeResponse(async () => {
+        //     const result = await apiService.recordResearchInviteResponse(invite.id, {
+        //         user_hash: userHash,
+        //         response: 'yes',
+        //     });
+        //     setHasResponded(true);
+        //     setIsInterested(true);
+        //     return result;
+        // });
+        
+        // Temporary: Update UI for testing
+        setHasResponded(true);
+        setIsInterested(true);
+    };
+
+    const handleNotInterested = async () => {
+        if (!invite || !userHash) {
+            Alert.alert('Error', 'User information not available');
+            return;
+        }
+
+        // TODO: Uncomment API calls when ready
+        // await executeResponse(async () => {
+        //     const result = await apiService.recordResearchInviteResponse(invite.id, {
+        //         user_hash: userHash,
+        //         response: 'no',
+        //     });
+        //     setHasResponded(true);
+        //     setIsInterested(false);
+        //     return result;
+        // });
+        
+        // Temporary: Update UI for testing
         setHasResponded(true);
         setIsInterested(false);
-        // In a real app, this would make an API call to decline
     };
 
     const handleLearnMore = () => {
-        Linking.openURL('https://study.asteriskdao.xyz/pcos-study');
+        if (invite?.link) {
+            Linking.openURL(invite.link);
+        }
     };
+
+    if (isLoading) {
+        return (
+            <View style={styles.container}>
+                <BackgroundPattern />
+                <SecondaryHeader
+                    title="Research Invite"
+                    onBack={() => navigation.goBack()}
+                />
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={theme.colors.asteriskPink} />
+                </View>
+            </View>
+        );
+    }
+
+    if (!invite) {
+        return (
+            <View style={styles.container}>
+                <BackgroundPattern />
+                <SecondaryHeader
+                    title="Research Invite"
+                    onBack={() => navigation.goBack()}
+                />
+                <View style={styles.loadingContainer}>
+                    <Text style={styles.errorText}>No research invite available</Text>
+                </View>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
@@ -60,12 +204,10 @@ const ResearchInviteScreen: React.FC = () => {
 
                     {/* Card Body */}
                     <View style={styles.cardBody}>
-                        <Text style={styles.studyTitle}>PCOS Symptom Tracking Study</Text>
-
-                        <Text style={styles.greeting}>Hi {username},</Text>
+                        <Text style={styles.studyTitle}>{invite.title}</Text>
 
                         <Text style={styles.description}>
-                            We're inviting you to join our PCOS Symptom Tracking Study. By sharing daily check-ins, you'll help researchers understand how lifestyle factors affect PCOS symptoms over time.
+                            {invite.message}
                         </Text>
 
                         {/* Study Details */}
@@ -80,36 +222,44 @@ const ResearchInviteScreen: React.FC = () => {
                                 <Text style={styles.detailText}>Reward: 150 points + early access to study results</Text>
                             </View>
 
-                            <TouchableOpacity
-                                style={styles.detailRow}
-                                onPress={handleLearnMore}
-                                activeOpacity={0.7}
-                            >
-                                <Ionicons name="link-outline" size={16} color={theme.colors.textPrimary} />
-                                <Text style={styles.linkText}>Learn more & sign up: study.asteriskdao.xyz/pcos-study</Text>
-                            </TouchableOpacity>
+                            {invite.link && (
+                                <TouchableOpacity
+                                    style={styles.detailRow}
+                                    onPress={handleLearnMore}
+                                    activeOpacity={0.7}
+                                >
+                                    <Ionicons name="link-outline" size={16} color={theme.colors.textPrimary} />
+                                    <Text style={styles.linkText}>Learn more & sign up: {invite.link}</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
 
                         {/* Response Status or Action Buttons */}
                         {hasResponded ? (
                             <View style={styles.responseContainer}>
                                 <View style={styles.thankYouContainer}>
-                                    <Text style={styles.thankYouText}>Thank you for your interest!</Text>
+                                    <Text style={styles.thankYouText}>
+                                        {isInterested 
+                                            ? 'Thank you for your interest! We\'ll be in touch soon.' 
+                                            : 'Thank you for letting us know.'}
+                                    </Text>
                                 </View>
                             </View>
                         ) : (
                             <View style={styles.buttonContainer}>
                                 <Button
-                                    title="Count me in"
+                                    title={isSubmitting ? 'Submitting...' : 'Count me in'}
                                     onPress={handleCountMeIn}
                                     variant="primary"
                                     style={styles.button}
+                                    disabled={isSubmitting || (userStatus && !userStatus.canRespond)}
                                 />
                                 <Button
-                                    title="Not interested"
+                                    title={isSubmitting ? 'Submitting...' : 'Not interested'}
                                     onPress={handleNotInterested}
                                     variant="outline"
                                     style={styles.button}
+                                    disabled={isSubmitting || (userStatus && !userStatus.canRespond)}
                                 />
                             </View>
                         )}
@@ -230,6 +380,17 @@ const styles = StyleSheet.create({
         color: '#4CAF50',
         fontSize: 13,
         fontWeight: '500',
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    errorText: {
+        ...theme.typography.presets.body,
+        color: theme.colors.textSecondary,
+        textAlign: 'center',
     },
 });
 
