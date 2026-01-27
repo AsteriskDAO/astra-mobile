@@ -6,6 +6,7 @@ import SecondaryHeader from '../../components/SecondaryHeader';
 import BackgroundPattern from '../../components/BackgroundPattern';
 import Button from '../../components/Button';
 import { theme } from '../../theme/theme';
+import { FONT_SIZES } from '../../constants/fontSizes';
 
 const VotingScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -57,8 +58,8 @@ const VotingScreen: React.FC = () => {
                     {/* Question */}
                     <View style={styles.questionSection}>
                         <Text style={styles.questionTitle}>What's next</Text>
-                        <Text style={styles.greeting}>Hi {username},</Text>
-                        <Text style={styles.instruction}>Help shape AsteriskDAO's next step.</Text>
+                        <Text style={styles.instruction}>Asterisk is organized as a DAO, meaning you can vote on our roadmap and plan. Below you’ll find any open votes.</Text>
+                        <Text style={styles.instruction}>Thanks for your input!</Text>
                     </View>
 
                     {!voteSubmitted ? (
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
     voteBannerText: {
         ...theme.typography.presets.h3,
         color: theme.colors.white,
-        fontSize: 12,
+        fontSize: FONT_SIZES.subtitle,
     },
     questionSection: {
         padding: theme.spacing.base,
@@ -196,16 +197,10 @@ const styles = StyleSheet.create({
         color: theme.colors.textPrimary,
         marginBottom: theme.spacing.sm,
     },
-    greeting: {
-        ...theme.typography.presets.bodySmall,
-        color: theme.colors.textSecondary,
-        marginBottom: 4,
-    },
     instruction: {
-        ...theme.typography.presets.bodySmall,
+        ...theme.typography.presets.body,
         color: theme.colors.textSecondary,
-        fontSize: 11,
-        lineHeight: 12,
+        lineHeight: 18,
     },
     optionsContainer: {
         paddingHorizontal: theme.spacing.base,
@@ -227,7 +222,7 @@ const styles = StyleSheet.create({
     optionText: {
         ...theme.typography.presets.body,
         color: theme.colors.textPrimary,
-        fontSize: 12,
+        fontSize: FONT_SIZES.subtitle,
     },
     optionTextSelected: {
         color: theme.colors.white,
@@ -257,7 +252,7 @@ const styles = StyleSheet.create({
     thankYouText: {
         ...theme.typography.presets.h3,
         color: '#84BB5C',
-        fontSize: 12,
+        fontSize: FONT_SIZES.subtitle,
     },
     resultsCard: {
         backgroundColor: theme.colors.white,
@@ -277,7 +272,7 @@ const styles = StyleSheet.create({
     resultsBannerText: {
         ...theme.typography.presets.h3,
         color: theme.colors.white,
-        fontSize: 12,
+        fontSize: FONT_SIZES.subtitle,
     },
     resultsContent: {
         padding: theme.spacing.base,
@@ -287,9 +282,8 @@ const styles = StyleSheet.create({
         marginBottom: theme.spacing.base,
     },
     resultOptionLabel: {
-        ...theme.typography.presets.bodySmall,
+        ...theme.typography.presets.body,
         color: theme.colors.textSecondary,
-        fontSize: 11,
         marginBottom: 4,
     },
     resultBarContainer: {
@@ -306,7 +300,7 @@ const styles = StyleSheet.create({
     },
     resultVotes: {
         fontFamily: 'monospace',
-        fontSize: 9,
+        fontSize: FONT_SIZES.small,
         lineHeight: 10,
         color: theme.colors.textSecondary,
     },

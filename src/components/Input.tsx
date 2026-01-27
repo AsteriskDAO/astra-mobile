@@ -2,6 +2,7 @@ import React, { useState, ReactNode } from 'react';
 import { View, TextInput, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { theme } from '../theme/theme';
 import Label from './Label';
+import { FONT_SIZES } from '../constants/fontSizes';
 
 interface InputProps {
     label?: string | ReactNode;
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingHorizontal: 16,
         paddingVertical: 12,
-        fontSize: 16,
+        fontSize: FONT_SIZES.input,
         fontWeight: '400',
         backgroundColor: theme.colors.white,
         color: '#272727',
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     inputCompact: {
         paddingHorizontal: 13,
         paddingVertical: 6,
-        fontSize: 12,
+        fontSize: FONT_SIZES.subtitle,
         backgroundColor: theme.colors.inputBackground,
     },
 });

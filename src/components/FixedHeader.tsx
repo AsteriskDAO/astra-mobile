@@ -1,21 +1,26 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Logo from './Logo';
 import { theme } from '../theme/theme';
 import { useTab } from '../contexts/TabContext';
+import { FONT_SIZES } from '../constants/fontSizes';
+import { RootStackParamList } from '../types/navigation';
 
 // Export header height constant for use in screens
 export const FIXED_HEADER_CONTENT_HEIGHT = 24; // Icon/text content height
 export const FIXED_HEADER_PADDING_BOTTOM = 8;
 
+type FixedHeaderNavigationProp = StackNavigationProp<RootStackParamList>;
+
 const FixedHeader: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<FixedHeaderNavigationProp>();
     const { activeTab } = useTab();
     const insets = useSafeAreaInsets();
-    
+
     // Get center text based on active tab - memoized for performance
     const centerText = useMemo(() => {
         switch (activeTab) {
@@ -37,7 +42,7 @@ const FixedHeader: React.FC = () => {
     const notificationCount = 0; // This could come from user context/state
 
     const handleProfilePress = () => {
-        navigation.navigate('Profile' as never);
+        navigation.navigate('Profile');
     };
 
     return (
@@ -59,7 +64,7 @@ const FixedHeader: React.FC = () => {
             {/* Right: Profile icon with notification count */}
             <View style={styles.rightSection}>
                 <TouchableOpacity onPress={handleProfilePress} style={styles.profileButton}>
-                    <Ionicons name="person-outline" size={24} color={theme.colors.textPrimary} />
+                    <Ionicons name="person-outline" size={20} color={theme.colors.ocean} />
                     {notificationCount > 0 && (
                         <View style={styles.notificationBadge}>
                             <Text style={styles.notificationCount}>{notificationCount}</Text>
@@ -76,8 +81,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingBottom: FIXED_HEADER_PADDING_BOTTOM,
-        paddingHorizontal: 25,
+        marginBottom: FIXED_HEADER_PADDING_BOTTOM,
+        paddingHorizontal: theme.spacing.lg,
         backgroundColor: theme.colors.background,
         position: 'absolute',
         top: 0,
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     streakNumber: {
-        fontSize: 14,
+        fontSize: FONT_SIZES.subtitle,
         lineHeight: 21,
         fontWeight: '500',
         fontFamily: 'Prompt',
@@ -105,7 +110,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     centerText: {
-        fontSize: 15,
+        fontSize: FONT_SIZES.h3,
         lineHeight: 16,
         fontWeight: '500',
         fontFamily: 'Prompt',
@@ -133,7 +138,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 4,
     },
     notificationCount: {
-        fontSize: 10,
+        fontSize: FONT_SIZES.label,
         lineHeight: 12,
         fontWeight: '500',
         fontFamily: 'Prompt',

@@ -8,10 +8,12 @@ import Label from '../../components/Label';
 import SecondaryHeader from '../../components/SecondaryHeader';
 import DiscardChangesModal from '../../components/modals/DiscardChangesModal';
 import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
+import DatePickerModal from '../../components/modals/DatePickerModal';
 import { useFormState } from '../../hooks/useFormState';
 import { RootStackParamList } from '../../types/navigation';
 import { Treatment } from '../../types/health';
 import { theme } from '../../theme/theme';
+import { FONT_SIZES } from '../../constants/fontSizes';
 
 type AddTreatmentScreenRouteProp = RouteProp<RootStackParamList, 'AddTreatmentScreen'>;
 
@@ -31,6 +33,7 @@ const AddTreatmentScreen: React.FC = () => {
     
     const [showDiscardModal, setShowDiscardModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     useEffect(() => {
         if (isEdit) {
@@ -68,6 +71,30 @@ const AddTreatmentScreen: React.FC = () => {
         navigation.goBack();
     };
 
+    const formatDate = (date: Date): string => {
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    };
+
+    const parseDate = (dateString: string): Date | undefined => {
+        if (!dateString) return undefined;
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+            const month = parseInt(parts[0]) - 1;
+            const day = parseInt(parts[1]);
+            const year = parseInt(parts[2]);
+            return new Date(year, month, day);
+        }
+        return undefined;
+    };
+
+    const handleDateSelect = (date: Date) => {
+        handleChange('startDate', formatDate(date));
+        setShowDatePicker(false);
+    };
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -92,7 +119,10 @@ const AddTreatmentScreen: React.FC = () => {
 
                     <View style={styles.inputGroup}>
                         <Label>When did you begin this treatment?</Label>
-                        <TouchableOpacity style={styles.dropdown}>
+                        <TouchableOpacity 
+                            style={styles.dropdown}
+                            onPress={() => setShowDatePicker(true)}
+                        >
                             <Text style={[styles.dropdownText, !formData.startDate && styles.placeholder]}>
                                 {formData.startDate || 'Select Date'}
                             </Text>
@@ -177,6 +207,15 @@ const AddTreatmentScreen: React.FC = () => {
                 confirmText="Yes, delete"
                 cancelText="Cancel"
             />
+
+            {/* Date Picker Modal */}
+            <DatePickerModal
+                visible={showDatePicker}
+                initialDate={parseDate(formData.startDate)}
+                onSave={handleDateSelect}
+                onCancel={() => setShowDatePicker(false)}
+                title="Select date"
+            />
         </View>
     );
 };
@@ -208,7 +247,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     dropdownText: {
-        fontSize: 16,
+        fontSize: FONT_SIZES.body,
         fontWeight: '400',
         color: '#272727',
         fontFamily: theme.typography.fontFamily.prompt,

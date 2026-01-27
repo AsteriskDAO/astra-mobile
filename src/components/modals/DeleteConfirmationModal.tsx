@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, Pressable } from 'react-native';
 import { theme } from '../../theme/theme';
 import Button from '../Button';
+import { FONT_SIZES } from '../../constants/fontSizes';
 
 interface DeleteConfirmationModalProps {
     visible: boolean;
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     },
     title: {
         ...theme.typography.presets.h2,
-        fontSize: 20,
+        fontSize: FONT_SIZES.h4,
         fontWeight: '600',
         color: theme.colors.textPrimary,
         marginBottom: 12,

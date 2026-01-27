@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../../components/Header';
@@ -9,9 +10,13 @@ import BackgroundPattern from '../../components/BackgroundPattern';
 import BackButton from '../../components/BackButton';
 import { theme } from '../../theme/theme';
 import { commonStyles } from '../../styles/common';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type IDVerificationScreenNavigationProp = StackNavigationProp<RootStackParamList, 'IDVerification'>;
 
 const IDVerificationScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<IDVerificationScreenNavigationProp>();
     const insets = useSafeAreaInsets();
     const [showTooltip, setShowTooltip] = useState(false);
 
@@ -89,7 +94,7 @@ const IDVerificationScreen: React.FC = () => {
                             // Simulate verification process - wait 1 second
                             // TODO: Add Self integration here
                             setTimeout(() => {
-                                navigation.navigate('FinalVerificationSuccess' as never);
+                                navigation.navigate('FinalVerificationSuccess');
                             }, 1000);
                         }}
                         variant="outline"
@@ -186,7 +191,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Prompt',
         fontStyle: 'normal',
         fontWeight: '500',
-        fontSize: 13,
+        fontSize: FONT_SIZES.h3,
         lineHeight: 15.6, // 120% of 13px
         textAlign: 'center',
         color: '#484848',
@@ -196,7 +201,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Prompt',
         fontStyle: 'normal',
         fontWeight: '400',
-        fontSize: 11,
+        fontSize: FONT_SIZES.bodySmall,
         lineHeight: 13.2, // 120% of 11px
         color: '#484848',
         width: 167,

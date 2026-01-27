@@ -8,9 +8,11 @@ import Toggle from '../../components/Toggle';
 import Input from '../../components/Input';
 import Label from '../../components/Label';
 import Button from '../../components/Button';
+import TimePickerModal from '../../components/modals/TimePickerModal';
 import { theme } from '../../theme/theme';
 import { apiService } from '../../services/api';
 import { useApiCall } from '../../hooks/useApiCall';
+import { FONT_SIZES } from '../../constants/fontSizes';
 
 const NotificationsSettingsScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -23,6 +25,7 @@ const NotificationsSettingsScreen: React.FC = () => {
     const [isActive, setIsActive] = useState(true);
     const [showFrequencyModal, setShowFrequencyModal] = useState(false);
     const [showDayModal, setShowDayModal] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     const { execute: saveSettings, isLoading: isSaving } = useApiCall({
@@ -83,6 +86,28 @@ const NotificationsSettingsScreen: React.FC = () => {
         Alert.alert('Success', 'Notification settings saved successfully');
     };
 
+    const formatTime = (hour: number, minute: number, ampm: 'AM' | 'PM'): string => {
+        const minuteStr = minute.toString().padStart(2, '0');
+        return `${hour}:${minuteStr} ${ampm}`;
+    };
+
+    const parseTime = (timeString: string): { hour: number; minute: number; ampm: 'AM' | 'PM' } | undefined => {
+        if (!timeString) return undefined;
+        const match = timeString.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (match) {
+            const hour = parseInt(match[1]);
+            const minute = parseInt(match[2]);
+            const ampm = match[3].toUpperCase() as 'AM' | 'PM';
+            return { hour, minute, ampm };
+        }
+        return undefined;
+    };
+
+    const handleTimeSelect = (time: { hour: number; minute: number; ampm: 'AM' | 'PM' }) => {
+        setReminderTime(formatTime(time.hour, time.minute, time.ampm));
+        setShowTimePicker(false);
+    };
+
     return (
         <View style={styles.container}>
             <BackgroundPattern />
@@ -127,13 +152,18 @@ const NotificationsSettingsScreen: React.FC = () => {
                     )}
 
                     {/* Preferred Reminder Time */}
-                    <Input
-                        label="Preferred Reminder Time"
-                        placeholder="Pick a time that suits you best"
-                        value={reminderTime}
-                        onChangeText={setReminderTime}
-                        style={styles.inputGroup}
-                    />
+                    <View style={styles.inputGroup}>
+                        <Label>Preferred Reminder Time</Label>
+                        <TouchableOpacity
+                            style={styles.timeInput}
+                            onPress={() => setShowTimePicker(true)}
+                        >
+                            <Text style={[styles.timeInputText, !reminderTime && styles.placeholder]}>
+                                {reminderTime || 'Pick a time that suits you best'}
+                            </Text>
+                            <Ionicons name="chevron-down" size={20} color="#999999" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* Other Notifications Section */}
@@ -238,6 +268,15 @@ const NotificationsSettingsScreen: React.FC = () => {
                     </View>
                 </TouchableOpacity>
             </Modal>
+
+            {/* Time Picker Modal */}
+            <TimePickerModal
+                visible={showTimePicker}
+                initialTime={parseTime(reminderTime)}
+                onSave={handleTimeSelect}
+                onCancel={() => setShowTimePicker(false)}
+                title="Select time"
+            />
         </View>
     );
 };
@@ -256,7 +295,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     sectionTitle: {
-        fontSize: 12,
+        fontSize: FONT_SIZES.subtitle,
         lineHeight: 18,
         fontWeight: '400',
         fontFamily: 'Prompt',
@@ -266,6 +305,23 @@ const styles = StyleSheet.create({
     inputGroup: {
         marginBottom: 15,
         width: '100%',
+    },
+    timeInput: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        backgroundColor: theme.colors.white,
+    },
+    timeInputText: {
+        fontSize: FONT_SIZES.body,
+        fontWeight: '400',
+        color: theme.colors.textPrimary,
+        fontFamily: theme.typography.fontFamily.prompt,
     },
     dropdown: {
         backgroundColor: theme.colors.white,
@@ -279,7 +335,7 @@ const styles = StyleSheet.create({
         borderColor: 'transparent',
     },
     dropdownText: {
-        fontSize: 16,
+        fontSize: FONT_SIZES.body,
         fontWeight: '400',
         color: '#272727',
         fontFamily: theme.typography.fontFamily.prompt,
@@ -304,14 +360,14 @@ const styles = StyleSheet.create({
     },
     notificationTitle: {
         ...theme.typography.presets.body,
-        fontSize: 13,
+        fontSize: FONT_SIZES.h3,
         lineHeight: 20,
         color: theme.colors.textPrimary,
         marginBottom: 4,
     },
     notificationDescription: {
         ...theme.typography.presets.bodySmall,
-        fontSize: 10,
+        fontSize: FONT_SIZES.label,
         lineHeight: 12,
         color: theme.colors.textDisabled,
     },
@@ -338,7 +394,7 @@ const styles = StyleSheet.create({
     },
     modalOptionText: {
         ...theme.typography.presets.body,
-        fontSize: 14,
+        fontSize: FONT_SIZES.subtitle,
         color: theme.colors.textPrimary,
     },
 });

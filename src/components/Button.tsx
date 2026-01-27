@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
-
+import { FONT_SIZES } from '../constants/fontSizes';
 interface ButtonProps {
     title?: string;
     onPress: () => void;
@@ -164,14 +164,14 @@ const styles = StyleSheet.create({
     },
     text: {
         ...theme.typography.presets.button,
-        fontSize: 16,
+        fontSize: FONT_SIZES.button,
         fontWeight: '400',
         textAlign: 'center',
         fontFamily: theme.typography.fontFamily.prompt,
     },
     primaryText: {
         ...theme.typography.presets.button,
-        fontSize: 16,
+        fontSize: FONT_SIZES.button,
         fontWeight: '400',
         textAlign: 'center',
         color: theme.colors.buttonPrimaryText,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     },
     secondaryText: {
         ...theme.typography.presets.button,
-        fontSize: 16,
+        fontSize: FONT_SIZES.button,
         fontWeight: '400',
         textAlign: 'center',
         color: theme.colors.buttonSecondaryText,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     },
     outlineText: {
         ...theme.typography.presets.button,
-        fontSize: 16,
+        fontSize: FONT_SIZES.button,
         fontWeight: '400',
         textAlign: 'center',
         color: theme.colors.buttonSecondaryText,

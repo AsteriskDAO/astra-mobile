@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Text, StyleSheet, TextStyle } from 'react-native';
 import { theme } from '../theme/theme';
+import { FONT_SIZES } from '../constants/fontSizes';
 
 interface LabelProps {
     children: string | ReactNode;
@@ -29,7 +30,7 @@ const Label: React.FC<LabelProps> = ({
 
 const styles = StyleSheet.create({
     label: {
-        fontSize: 14,
+        fontSize: FONT_SIZES.label,
         fontWeight: '500',
         color: '#9C9C9C',
         marginBottom: 8,

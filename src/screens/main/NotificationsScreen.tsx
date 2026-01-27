@@ -1,13 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import WhatsNextSection from '../../components/WhatsNextSection';
 import { theme } from '../../theme/theme';
 import { useFixedHeaderHeight } from '../../hooks/useFixedHeaderHeight';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type NotificationsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MainContainer'>;
 
 const NotificationsScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NotificationsScreenNavigationProp>();
     const headerHeight = useFixedHeaderHeight();
 
     return (
@@ -25,7 +30,7 @@ const NotificationsScreen: React.FC = () => {
                             iconSource: require('../../../assets/research-invite.svg'),
                             title: 'Research invitation',
                             subtitle: 'You have been selected to participate in study X.',
-                            onPress: () => navigation.navigate('ResearchInvite' as never),
+                            onPress: () => navigation.navigate('ResearchInvite'),
                         },
                         {
                             iconSource: require('../../../assets/vote.svg'),
@@ -55,27 +60,27 @@ const NotificationsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F8F8',
+        backgroundColor: theme.colors.background,
     },
     content: {
         flex: 1,
-        paddingHorizontal: 25,
+        paddingHorizontal: theme.spacing.lg,
     },
     scrollContent: {
-        paddingBottom: 20,
+        paddingBottom: theme.spacing.lg,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 24,
-        gap: 4,
+        gap: theme.spacing.xs,
     },
     headerTitle: {
         fontFamily: theme.typography.fontFamily.prompt,
-        fontSize: 18,
+        fontSize: FONT_SIZES.h4,
         fontWeight: '500',
-        color: '#232323',
+        color: theme.colors.textPrimary,
     },
 });
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, Image, ImageSourcePropType } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
+import { FONT_SIZES } from '../constants/fontSizes';
 
 interface ActionCardProps {
     icon?: {
@@ -73,14 +74,14 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: theme.typography.fontFamily.prompt,
-        fontSize: 13,
+        fontSize: FONT_SIZES.title,
         fontWeight: '500',
         color: '#232323',
         marginBottom: 4,
     },
     subtitle: {
         fontFamily: theme.typography.fontFamily.prompt,
-        fontSize: 10,
+        fontSize: FONT_SIZES.subtitle,
         color: '#949494',
     },
 });

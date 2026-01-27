@@ -1,67 +1,100 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ImageSourcePropType } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import SecondaryHeader from '../../components/SecondaryHeader';
 import Toggle from '../../components/Toggle';
 import MetricsCards from '../../components/MetricsCards';
 import DayStreakCard from '../../components/DayStreakCard';
+import EditButton from '../../components/EditButton';
+import { useUser } from '../../contexts/UserContext';
 import { theme } from '../../theme/theme';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
 
 const ProfileScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<ProfileScreenNavigationProp>();
+    const { user } = useUser();
     const [researchInvitesEnabled, setResearchInvitesEnabled] = useState(true);
 
+    // Use user data from context, fallback to defaults
+    const profile = user?.healthData?.profile;
     const profileData = {
-        nickname: 'username',
-        age: '18-25 years',
-        ethnicity: '-',
-        region: 'Europe',
-        pregnancy: 'No',
-        caretaker: '-',
+        nickname: user?.nickname || 'username',
+        age: profile?.age_range
+            ? `${profile.age_range} years`
+            : '18-25 years',
+        ethnicity: profile?.ethnicity?.length
+            ? profile.ethnicity.join(', ')
+            : '-',
+        region: profile?.location || 'Europe',
+        pregnancy: profile?.is_pregnant ? 'Yes' : 'No',
+        caretaker: user?.healthData?.caretaker?.length
+            ? user.healthData.caretaker.join(', ')
+            : '-',
     };
 
     const handleEditProfile = () => {
-        navigation.navigate('ProfileInformation' as never);
+        navigation.navigate('ProfileInformation');
     };
 
     const handleConditionsPress = () => {
-        navigation.navigate('ConditionsScreen' as never);
+        navigation.navigate('ConditionsScreen');
     };
 
     const handleMedicationsPress = () => {
-        navigation.navigate('MedicationsScreen' as never);
+        navigation.navigate('MedicationsScreen');
     };
 
     const handleTreatmentsPress = () => {
-        navigation.navigate('TreatmentsScreen' as never);
+        navigation.navigate('TreatmentsScreen');
     };
 
     const handleDayStreakPress = () => {
-        navigation.navigate('DayStreakScreen' as never);
+        navigation.navigate('DayStreakScreen');
     };
+
+    const healthSections: Array<{
+        title: string;
+        onPress: () => void;
+        iconSource?: ImageSourcePropType;
+    }> = [
+            {
+                title: 'Conditions',
+                onPress: handleConditionsPress,
+                iconSource: require('../../../assets/conditions.svg') as ImageSourcePropType,
+            },
+            {
+                title: 'Medications',
+                onPress: handleMedicationsPress,
+                iconSource: require('../../../assets/medications.svg') as ImageSourcePropType,
+            },
+            {
+                title: 'Treatments',
+                onPress: handleTreatmentsPress,
+            },
+        ];
 
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
                 <SecondaryHeader
-                    title="username"
+                    title={profileData.nickname}
                     onBack={() => navigation.goBack()}
+                    rightElement={<Ionicons name="person-outline" size={20} color={theme.colors.ocean} />}
                 />
 
                 {/* Profile Information Card */}
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
                         <View style={styles.cardTitleContainer}>
-                            <View style={styles.profileIconSmall}>
-                                <View style={styles.profileIconInner} />
-                            </View>
+                            <Ionicons name="person-outline" size={15} color={theme.colors.ocean} />
                             <Text style={styles.cardTitle}>Profile Information</Text>
                         </View>
-                        <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
-                            <Ionicons name="create-outline" size={10} color="#FF01B4" />
-                            <Text style={styles.editButtonText}>edit</Text>
-                        </TouchableOpacity>
+                        <EditButton onPress={handleEditProfile} />
                     </View>
 
                     <View style={styles.profileGrid}>
@@ -93,29 +126,35 @@ const ProfileScreen: React.FC = () => {
                 </View>
 
                 {/* Health Sections */}
-                <TouchableOpacity style={styles.healthCard} onPress={handleConditionsPress}>
-                    <View style={styles.healthCardContent}>
-                        <Ionicons name="medical-outline" size={15} color="#232323" />
-                        <Text style={styles.healthCardTitle}>Conditions</Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={8} color="#949494" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.healthCard} onPress={handleMedicationsPress}>
-                    <View style={styles.healthCardContent}>
-                        <Ionicons name="medical-outline" size={15} color="#232323" />
-                        <Text style={styles.healthCardTitle}>Medications</Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={8} color="#949494" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.healthCard} onPress={handleTreatmentsPress}>
-                    <View style={styles.healthCardContent}>
-                        <Ionicons name="medical-outline" size={15} color="#232323" />
-                        <Text style={styles.healthCardTitle}>Treatments</Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={8} color="#949494" />
-                </TouchableOpacity>
+                {healthSections.map((section) => (
+                    <TouchableOpacity
+                        key={section.title}
+                        style={styles.healthCard}
+                        onPress={section.onPress}
+                    >
+                        <View style={styles.healthCardContent}>
+                            {section.iconSource ? (
+                                <Image
+                                    source={section.iconSource}
+                                    style={styles.healthCardIcon}
+                                    resizeMode="contain"
+                                />
+                            ) : (
+                                <Ionicons
+                                    name="medical-outline"
+                                    size={15}
+                                    color={theme.colors.textPrimary}
+                                />
+                            )}
+                            <Text style={styles.healthCardTitle}>{section.title}</Text>
+                        </View>
+                        <Ionicons
+                            name="chevron-forward"
+                            size={8}
+                            color={theme.colors.textDisabled}
+                        />
+                    </TouchableOpacity>
+                ))}
 
                 {/* Engagement Metrics */}
                 <MetricsCards pointsEarned="12" rank="#23" />
@@ -146,39 +185,18 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F8F8',
+        backgroundColor: theme.colors.background,
     },
     content: {
         flex: 1,
-        paddingHorizontal: 25,
-    },
-    profileIconContainer: {
-        position: 'absolute',
-        right: 0,
-        width: 14,
-        height: 14,
-    },
-    profileIconCircle: {
-        width: 14,
-        height: 14,
-        borderRadius: 7,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    profileIconInnerCircle: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        borderWidth: 1.2,
-        borderColor: '#61ABC5',
-        backgroundColor: '#61ABC5',
+        paddingHorizontal: theme.spacing.lg,
     },
     card: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.white,
         borderRadius: 15,
-        padding: 12,
+        padding: theme.spacing.md,
         marginTop: 30,
-        marginBottom: 20,
+        marginBottom: theme.spacing.lg,
         width: '100%',
         minHeight: 151,
     },
@@ -191,52 +209,19 @@ const styles = StyleSheet.create({
     cardTitleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
-    },
-    profileIconSmall: {
-        width: 15,
-        height: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    profileIconInner: {
-        width: 11,
-        height: 12,
-        borderWidth: 1.2,
-        borderColor: '#232323',
-        borderRadius: 5.5,
+        gap: theme.spacing.xs,
     },
     cardTitle: {
-        fontSize: 13,
-        lineHeight: 14,
+        fontSize: FONT_SIZES.title,
+        lineHeight: 18,
         fontWeight: '500',
         fontFamily: 'Prompt',
-        color: '#232323',
-    },
-    editButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#FF01B4',
-        paddingHorizontal: 4,
-        paddingVertical: 2.5,
-        borderRadius: 6,
-        width: 40,
-        height: 20,
-        justifyContent: 'center',
-        gap: 4,
-    },
-    editButtonText: {
-        fontSize: 10,
-        lineHeight: 15,
-        fontWeight: '500',
-        fontFamily: 'Prompt',
-        color: '#FF01B4',
+        color: theme.colors.textPrimary,
     },
     profileGrid: {
         flexDirection: 'column',
         gap: 3,
-        paddingLeft: 20,
+        paddingLeft: theme.spacing.lg,
     },
     profileItem: {
         flexDirection: 'row',
@@ -245,25 +230,25 @@ const styles = StyleSheet.create({
         height: 15,
     },
     profileLabel: {
-        fontSize: 10,
-        lineHeight: 15,
+        fontSize: FONT_SIZES.subtitle,
+        lineHeight: 18,
         fontWeight: '400',
         fontFamily: 'Prompt',
-        color: '#949494',
+        color: theme.colors.textDisabled,
     },
     profileValue: {
-        fontSize: 10,
-        lineHeight: 15,
+        fontSize: FONT_SIZES.body,
+        lineHeight: 20,
         fontWeight: '400',
         fontFamily: 'Prompt',
-        color: '#232323',
+        color: theme.colors.textPrimary,
     },
     healthCard: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.white,
         borderRadius: 15,
         height: 40,
-        paddingHorizontal: 12,
-        marginBottom: 10,
+        paddingHorizontal: theme.spacing.md,
+        marginBottom: theme.spacing.sm,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -272,21 +257,25 @@ const styles = StyleSheet.create({
     healthCardContent: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
+        gap: theme.spacing.md,
+    },
+    healthCardIcon: {
+        width: 15,
+        height: 15,
     },
     healthCardTitle: {
-        fontSize: 13,
-        lineHeight: 14,
+        fontSize: FONT_SIZES.title,
+        lineHeight: 18,
         fontWeight: '500',
         fontFamily: 'Prompt',
-        color: '#232323',
+        color: theme.colors.textPrimary,
     },
     researchCard: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.white,
         borderRadius: 8,
         width: '100%',
-        height: 80,
-        marginBottom: 20,
+        minHeight: 80,
+        marginBottom: theme.spacing.lg,
     },
     researchContent: {
         flex: 1,
@@ -297,23 +286,24 @@ const styles = StyleSheet.create({
     },
     researchTextContainer: {
         flex: 1,
-        marginRight: 10,
+        marginRight: theme.spacing.sm,
     },
     researchTitle: {
-        fontSize: 13,
+        fontSize: FONT_SIZES.title,
         lineHeight: 20,
         fontWeight: '500',
         fontFamily: 'Prompt',
-        color: '#232323',
-        marginBottom: 8,
+        color: theme.colors.textPrimary,
+        marginBottom: theme.spacing.xs,
     },
     researchDescription: {
-        fontSize: 10,
-        lineHeight: 12,
+        fontSize: FONT_SIZES.subtitle,
+        lineHeight: 18,
         fontWeight: '400',
         fontFamily: 'Prompt',
-        color: '#949494',
-        width: 199,
+        color: theme.colors.textDisabled,
+        flex: 1,
+        flexWrap: 'wrap',
     },
 });
 

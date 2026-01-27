@@ -1,30 +1,68 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../../components/Header';
 import BackButton from '../../components/BackButton';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import Dropdown from '../../components/Dropdown';
+import SearchableInput from '../../components/SearchableInput';
 import BackgroundPattern from '../../components/BackgroundPattern';
 import { theme } from '../../theme/theme';
+import { ETHNICITY_OPTIONS } from '../../constants/ethnicity';
+import { HEALTH_CONDITIONS } from '../../constants/healthConditions';
+import { MEDICATIONS } from '../../constants/medications';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type ProfileSetupScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ProfileSetup'>;
 
 const ProfileSetupScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<ProfileSetupScreenNavigationProp>();
     const insets = useSafeAreaInsets();
     const [currentStep, setCurrentStep] = useState(1);
     const [profileData, setProfileData] = useState({
         name: '',
-        age: '18-20',
-        ethnicity: 'Prefer not to say',
-        location: 'Prefer not to say',
-        healthConditions: '',
-        medications: '',
+        age: '',
+        ethnicity: '',
+        location: '',
+        healthConditions: [] as string[],
+        medications: [] as string[],
         treatments: '',
-        caretaker: '',
+        caretaker: [] as string[],
         trialsParticipation: null as boolean | null,
     });
+
+    const ageOptions = [
+        { label: '18-20', value: '18-20' },
+        { label: '21-25', value: '21-25' },
+        { label: '26-30', value: '26-30' },
+        { label: '31-35', value: '31-35' },
+        { label: '36-40', value: '36-40' },
+        { label: '41-45', value: '41-45' },
+        { label: '46-50', value: '46-50' },
+        { label: '51-55', value: '51-55' },
+        { label: '56-60', value: '56-60' },
+        { label: '61-65', value: '61-65' },
+        { label: '66-70', value: '66-70' },
+        { label: '71+', value: '71+' },
+    ];
+
+    const locationOptions = [
+        { label: 'North America', value: 'north_america' },
+        { label: 'South America', value: 'south_america' },
+        { label: 'Europe', value: 'europe' },
+        { label: 'Asia', value: 'asia' },
+        { label: 'Africa', value: 'africa' },
+        { label: 'Oceania', value: 'oceania' },
+        { label: 'Middle East', value: 'middle_east' },
+        { label: 'Prefer not to say', value: 'prefer_not_to_say' },
+    ];
+
+    const caretakerOptions = ['Kids', 'Parents', 'Partner', 'Friend', 'No', 'Other'];
 
     const totalSteps = 9;
 
@@ -32,7 +70,7 @@ const ProfileSetupScreen: React.FC = () => {
         if (currentStep < totalSteps) {
             setCurrentStep(currentStep + 1);
         } else {
-            navigation.navigate('ProfileSaved' as never);
+            navigation.navigate('ProfileSaved');
         }
     };
 
@@ -114,47 +152,85 @@ const ProfileSetupScreen: React.FC = () => {
 
             case 2:
                 return (
-                    <TouchableOpacity style={styles.dropdown}>
-                        <Text style={styles.dropdownText}>{profileData.age}</Text>
-                        <Ionicons name="chevron-down" size={20} color="#949494" />
-                    </TouchableOpacity>
+                    <Dropdown
+                        value={profileData.age}
+                        options={ageOptions}
+                        onSelect={(value) => setProfileData({ ...profileData, age: value })}
+                        placeholder="Select age range"
+                    />
                 );
 
             case 3:
                 return (
-                    <TouchableOpacity style={styles.dropdown}>
-                        <Text style={styles.dropdownText}>{profileData.ethnicity}</Text>
-                        <Ionicons name="chevron-down" size={20} color="#949494" />
-                    </TouchableOpacity>
+                    <Dropdown
+                        value={profileData.ethnicity}
+                        options={ETHNICITY_OPTIONS}
+                        onSelect={(value) => setProfileData({ ...profileData, ethnicity: value })}
+                        placeholder="Select ethnicity"
+                    />
                 );
 
             case 4:
                 return (
-                    <TouchableOpacity style={styles.dropdown}>
-                        <Text style={styles.dropdownText}>{profileData.location}</Text>
-                        <Ionicons name="chevron-down" size={20} color="#949494" />
-                    </TouchableOpacity>
+                    <Dropdown
+                        value={profileData.location}
+                        options={locationOptions}
+                        onSelect={(value) => setProfileData({ ...profileData, location: value })}
+                        placeholder="Select location"
+                    />
                 );
 
             case 5:
                 return (
-                    <Input
-                        placeholder="Start typing"
-                        value={profileData.healthConditions}
-                        onChangeText={(text) => setProfileData({ ...profileData, healthConditions: text })}
-                        multiline
-                        numberOfLines={3}
+                    <SearchableInput
+                        value=""
+                        options={HEALTH_CONDITIONS}
+                        onSelect={() => { }}
+                        onAdd={(value) => {
+                            if (!profileData.healthConditions.includes(value)) {
+                                setProfileData({
+                                    ...profileData,
+                                    healthConditions: [...profileData.healthConditions, value],
+                                });
+                            }
+                        }}
+                        onRemove={(value) => {
+                            setProfileData({
+                                ...profileData,
+                                healthConditions: profileData.healthConditions.filter(c => c !== value),
+                            });
+                        }}
+                        placeholder="Start typing to search conditions"
+                        multiline={false}
+                        allowMultiple={true}
+                        selectedValues={profileData.healthConditions}
                     />
                 );
 
             case 6:
                 return (
-                    <Input
-                        placeholder="Start typing"
-                        value={profileData.medications}
-                        onChangeText={(text) => setProfileData({ ...profileData, medications: text })}
-                        multiline
-                        numberOfLines={3}
+                    <SearchableInput
+                        value=""
+                        options={MEDICATIONS}
+                        onSelect={() => { }}
+                        onAdd={(value) => {
+                            if (!profileData.medications.includes(value)) {
+                                setProfileData({
+                                    ...profileData,
+                                    medications: [...profileData.medications, value],
+                                });
+                            }
+                        }}
+                        onRemove={(value) => {
+                            setProfileData({
+                                ...profileData,
+                                medications: profileData.medications.filter(m => m !== value),
+                            });
+                        }}
+                        placeholder="Start typing to search medications"
+                        multiline={false}
+                        allowMultiple={true}
+                        selectedValues={profileData.medications}
                     />
                 );
 
@@ -172,23 +248,41 @@ const ProfileSetupScreen: React.FC = () => {
             case 8:
                 return (
                     <View style={styles.optionsContainer}>
-                        {['Kids', 'Parents', 'Partner', 'Friend', 'No', 'Other'].map((option) => (
-                            <TouchableOpacity
-                                key={option}
-                                style={[
-                                    styles.optionButton,
-                                    profileData.caretaker === option && styles.selectedOptionButton
-                                ]}
-                                onPress={() => setProfileData({ ...profileData, caretaker: option })}
-                            >
-                                <Text style={[
-                                    styles.optionText,
-                                    profileData.caretaker === option && styles.selectedOptionText
-                                ]}>
-                                    {option}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
+                        {caretakerOptions.map((option) => {
+                            const isSelected = profileData.caretaker.includes(option);
+                            return (
+                                <TouchableOpacity
+                                    key={option}
+                                    style={[
+                                        styles.optionButton,
+                                        isSelected && styles.selectedOptionButton
+                                    ]}
+                                    onPress={() => {
+                                        if (isSelected) {
+                                            setProfileData({
+                                                ...profileData,
+                                                caretaker: profileData.caretaker.filter(c => c !== option),
+                                            });
+                                        } else {
+                                            setProfileData({
+                                                ...profileData,
+                                                caretaker: [...profileData.caretaker, option],
+                                            });
+                                        }
+                                    }}
+                                >
+                                    <Text style={[
+                                        styles.optionText,
+                                        isSelected && styles.selectedOptionText
+                                    ]}>
+                                        {option}
+                                    </Text>
+                                    {isSelected && (
+                                        <Ionicons name="checkmark" size={20} color="#FFFFFF" style={styles.checkIcon} />
+                                    )}
+                                </TouchableOpacity>
+                            );
+                        })}
                     </View>
                 );
 
@@ -257,7 +351,7 @@ const ProfileSetupScreen: React.FC = () => {
                         title="Next"
                         onPress={handleNext}
                         variant="outline"
-                        disabled={(currentStep === 8 && !profileData.caretaker) || (currentStep === 9 && profileData.trialsParticipation === null)}
+                        disabled={(currentStep === 8 && profileData.caretaker.length === 0) || (currentStep === 9 && profileData.trialsParticipation === null)}
                     />
                     {(currentStep === 5 || currentStep === 6 || currentStep === 7) && (
                         <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
@@ -304,7 +398,7 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     question: {
-        fontSize: 22,
+        fontSize: FONT_SIZES.h2,
         lineHeight: 23,
         fontWeight: '400',
         fontFamily: theme.typography.fontFamily.prompt,
@@ -313,7 +407,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     questionSingle: {
-        fontSize: 22,
+        fontSize: FONT_SIZES.h2,
         lineHeight: 23,
         fontWeight: '400',
         fontFamily: theme.typography.fontFamily.prompt,
@@ -322,8 +416,8 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     subtext: {
-        fontSize: 11,
-        lineHeight: 13,
+        fontSize: FONT_SIZES.subtitle,
+        lineHeight: 18,
         fontWeight: '400',
         fontFamily: theme.typography.fontFamily.prompt,
         color: '#484848',
@@ -345,7 +439,7 @@ const styles = StyleSheet.create({
         borderColor: 'transparent',
     },
     dropdownText: {
-        fontSize: 16,
+        fontSize: FONT_SIZES.body,
         fontWeight: '400',
         fontFamily: theme.typography.fontFamily.prompt,
         color: '#272727',
@@ -354,7 +448,9 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: theme.colors.white,
         borderRadius: 8,
-        justifyContent: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         paddingHorizontal: 16,
         paddingVertical: 12,
         marginBottom: 8,
@@ -365,7 +461,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.ocean,
     },
     optionText: {
-        fontSize: 16,
+        fontSize: FONT_SIZES.body,
         fontWeight: '400',
         fontFamily: theme.typography.fontFamily.prompt,
         color: '#272727',
@@ -374,12 +470,15 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#FFFFFF',
     },
+    checkIcon: {
+        marginLeft: 8,
+    },
     skipLink: {
         alignSelf: 'center',
         marginTop: theme.spacing.md,
     },
     skipText: {
-        fontSize: 11,
+        fontSize: FONT_SIZES.bodySmall,
         lineHeight: 17,
         fontWeight: '500',
         fontFamily: theme.typography.fontFamily.prompt,

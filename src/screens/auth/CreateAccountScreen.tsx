@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
@@ -14,9 +15,12 @@ import { apiService } from '../../services/api';
 import { useUser } from '../../contexts/UserContext';
 import { useApiCall } from '../../hooks/useApiCall';
 import { validateEmail, validatePassword, validatePasswordMatch } from '../../utils/validation';
+import { RootStackParamList } from '../../types/navigation';
+
+type CreateAccountScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CreateAccount'>;
 
 const CreateAccountScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<CreateAccountScreenNavigationProp>();
     const insets = useSafeAreaInsets();
     const { setUser } = useUser();
     const [formData, setFormData] = useState({
@@ -29,30 +33,12 @@ const CreateAccountScreen: React.FC = () => {
         showErrorAlert: true,
         errorMessage: 'Failed to create account',
         onSuccess: () => {
-            navigation.navigate('ProfileIntro' as never);
+            navigation.navigate('ProfileIntro');
         },
     });
 
     const handleNext = async () => {
-        // Validate form
-        const emailValidation = validateEmail(formData.email);
-        if (!emailValidation.isValid) {
-            Alert.alert('Error', emailValidation.error);
-            return;
-        }
-
-        const passwordValidation = validatePassword(formData.password);
-        if (!passwordValidation.isValid) {
-            Alert.alert('Error', passwordValidation.error);
-            return;
-        }
-
-        const passwordMatchValidation = validatePasswordMatch(formData.password, formData.confirmPassword);
-        if (!passwordMatchValidation.isValid) {
-            Alert.alert('Error', passwordMatchValidation.error);
-            return;
-        }
-
+        // Accept any dummy content and proceed to next step
         // Execute registration
         // TODO: Uncomment API calls when ready
         // await execute(async () => {
@@ -70,8 +56,8 @@ const CreateAccountScreen: React.FC = () => {
         //     return response;
         // });
 
-        // Temporary: Navigate directly for testing
-        navigation.navigate('ProfileIntro' as never);
+        // Temporary: Navigate directly for testing (accepts any dummy content)
+        navigation.navigate('ProfileIntro');
     };
 
     return (

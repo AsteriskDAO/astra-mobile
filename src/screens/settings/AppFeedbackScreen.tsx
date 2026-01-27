@@ -12,6 +12,7 @@ import { apiService } from '../../services/api';
 import { useUser } from '../../contexts/UserContext';
 import { useApiCall } from '../../hooks/useApiCall';
 import { validateRequired } from '../../utils/validation';
+import { FONT_SIZES } from '../../constants/fontSizes';
 
 type FeedbackType = 'Bug Report' | 'General Feedback' | 'Feature Request';
 
@@ -75,7 +76,7 @@ const AppFeedbackScreen: React.FC = () => {
         //         user_hash: userHash || undefined,
         //     });
         // });
-        
+
         // Temporary: Show success message for testing
         Alert.alert('Success', 'Thank you for your feedback!', [
             { text: 'OK', onPress: () => navigation.goBack() }
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
         borderColor: 'transparent',
     },
     dropdownText: {
-        fontSize: 16,
+        fontSize: FONT_SIZES.body,
         fontWeight: '400',
         color: '#272727',
         fontFamily: theme.typography.fontFamily.prompt,

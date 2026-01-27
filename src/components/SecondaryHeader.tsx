@@ -6,6 +6,7 @@ import Logo from './Logo';
 import { Ionicons } from '@expo/vector-icons';
 
 import { theme } from '../theme/theme';
+import { FONT_SIZES } from '../constants/fontSizes';
 
 interface SecondaryHeaderProps {
     title: string;
@@ -70,12 +71,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     headerTitle: {
-        fontSize: 18,
+        fontSize: FONT_SIZES.h4,
         fontWeight: 'bold',
         textAlign: 'center',
     },
     asterisk: {
-        fontSize: 18,
+        fontSize: FONT_SIZES.h4,
         color: theme.colors.asteriskPink,
     },
 });

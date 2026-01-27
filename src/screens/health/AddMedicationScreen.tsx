@@ -5,13 +5,18 @@ import { Ionicons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Label from '../../components/Label';
+import Dropdown from '../../components/Dropdown';
+import SearchableInput from '../../components/SearchableInput';
 import SecondaryHeader from '../../components/SecondaryHeader';
 import DiscardChangesModal from '../../components/modals/DiscardChangesModal';
 import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
+import DatePickerModal from '../../components/modals/DatePickerModal';
 import { useFormState } from '../../hooks/useFormState';
 import { RootStackParamList } from '../../types/navigation';
 import { Medication } from '../../types/health';
 import { theme } from '../../theme/theme';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { MEDICATIONS } from '../../constants/medications';
 
 type AddMedicationScreenRouteProp = RouteProp<RootStackParamList, 'AddMedicationScreen'>;
 
@@ -19,7 +24,7 @@ const AddMedicationScreen: React.FC = () => {
     const navigation = useNavigation();
     const route = useRoute<AddMedicationScreenRouteProp>();
     const isEdit = route.params?.medication;
-    
+
     const { formData, handleChange, hasChanges, setFormData } = useFormState({
         medicationName: '',
         startDate: '',
@@ -28,9 +33,24 @@ const AddMedicationScreen: React.FC = () => {
         frequency: '',
         notes: '',
     });
-    
+
     const [showDiscardModal, setShowDiscardModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+    const medicationTypeOptions = [
+        { label: 'Prescription', value: 'Prescription' },
+        { label: 'Over-the-counter', value: 'Over-the-counter' },
+        { label: 'Supplement', value: 'Supplement' },
+        { label: 'Herbal', value: 'Herbal' },
+    ];
+
+    const medicationStatusOptions = [
+        { label: 'Ongoing', value: 'Ongoing' },
+        { label: 'Completed', value: 'Completed' },
+        { label: 'Paused', value: 'Paused' },
+        { label: 'Discontinued', value: 'Discontinued' },
+    ];
 
     useEffect(() => {
         if (isEdit) {
@@ -44,6 +64,30 @@ const AddMedicationScreen: React.FC = () => {
             });
         }
     }, [isEdit, setFormData]);
+
+    const formatDate = (date: Date): string => {
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    };
+
+    const parseDate = (dateString: string): Date | undefined => {
+        if (!dateString) return undefined;
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+            const month = parseInt(parts[0]) - 1;
+            const day = parseInt(parts[1]);
+            const year = parseInt(parts[2]);
+            return new Date(year, month, day);
+        }
+        return undefined;
+    };
+
+    const handleDateSelect = (date: Date) => {
+        handleChange('startDate', formatDate(date));
+        setShowDatePicker(false);
+    };
 
     const handleBack = () => {
         if (hasChanges) {
@@ -83,16 +127,22 @@ const AddMedicationScreen: React.FC = () => {
 
                 {/* Form Fields */}
                 <View style={styles.formContainer}>
-                    <Input
-                        label="Medication Name"
-                        value={formData.medicationName}
-                        onChangeText={(text) => handleChange('medicationName', text)}
-                        placeholder="Enter medication name"
-                    />
+                    <View style={styles.inputGroup}>
+                        <SearchableInput
+                            label="Medication Name"
+                            value={formData.medicationName}
+                            options={MEDICATIONS}
+                            onSelect={(value) => handleChange('medicationName', value)}
+                            placeholder="Type to search medications"
+                        />
+                    </View>
 
                     <View style={styles.inputGroup}>
                         <Label>When did you begin taking it?</Label>
-                        <TouchableOpacity style={styles.dropdown}>
+                        <TouchableOpacity 
+                            style={styles.dropdown}
+                            onPress={() => setShowDatePicker(true)}
+                        >
                             <Text style={[styles.dropdownText, !formData.startDate && styles.placeholder]}>
                                 {formData.startDate || 'Select Date'}
                             </Text>
@@ -102,22 +152,22 @@ const AddMedicationScreen: React.FC = () => {
 
                     <View style={styles.inputGroup}>
                         <Label>Type</Label>
-                        <TouchableOpacity style={styles.dropdown}>
-                            <Text style={[styles.dropdownText, !formData.type && styles.placeholder]}>
-                                {formData.type || 'Select Type'}
-                            </Text>
-                            <Ionicons name="chevron-down" size={20} color="#999999" />
-                        </TouchableOpacity>
+                        <Dropdown
+                            value={formData.type}
+                            options={medicationTypeOptions}
+                            onSelect={(value) => handleChange('type', value)}
+                            placeholder="Select Type"
+                        />
                     </View>
 
                     <View style={styles.inputGroup}>
                         <Label>Status</Label>
-                        <TouchableOpacity style={styles.dropdown}>
-                            <Text style={[styles.dropdownText, !formData.status && styles.placeholder]}>
-                                {formData.status || 'Select Status'}
-                            </Text>
-                            <Ionicons name="chevron-down" size={20} color="#999999" />
-                        </TouchableOpacity>
+                        <Dropdown
+                            value={formData.status}
+                            options={medicationStatusOptions}
+                            onSelect={(value) => handleChange('status', value)}
+                            placeholder="Select Status"
+                        />
                     </View>
 
                     <View style={styles.inputGroup}>
@@ -177,6 +227,15 @@ const AddMedicationScreen: React.FC = () => {
                 confirmText="Yes, delete"
                 cancelText="Cancel"
             />
+
+            {/* Date Picker Modal */}
+            <DatePickerModal
+                visible={showDatePicker}
+                initialDate={parseDate(formData.startDate)}
+                onSave={handleDateSelect}
+                onCancel={() => setShowDatePicker(false)}
+                title="Select date"
+            />
         </View>
     );
 };
@@ -208,7 +267,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     dropdownText: {
-        fontSize: 16,
+        fontSize: FONT_SIZES.body,
         fontWeight: '400',
         color: '#272727',
         fontFamily: theme.typography.fontFamily.prompt,

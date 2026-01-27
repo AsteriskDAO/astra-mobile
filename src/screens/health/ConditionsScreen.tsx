@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import SecondaryHeader from '../../components/SecondaryHeader';
+import HealthItemCard from '../../components/HealthItemCard';
 import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
 import { Condition } from '../../types/health';
 import { theme } from '../../theme/theme';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type ConditionsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ConditionsScreen'>;
 
 const ConditionsScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<ConditionsScreenNavigationProp>();
     const [conditions, setConditions] = useState<Condition[]>([
         {
             id: '1',
@@ -32,7 +38,7 @@ const ConditionsScreen: React.FC = () => {
     const [selectedCondition, setSelectedCondition] = useState<Condition | null>(null);
 
     const handleAddCondition = () => {
-        navigation.navigate('AddConditionScreen' as never);
+        navigation.navigate('AddConditionScreen', {});
     };
 
     const handleEditCondition = (condition: Condition) => {
@@ -65,44 +71,24 @@ const ConditionsScreen: React.FC = () => {
                     icon={{
                         name: 'medical-outline',
                         size: 20,
-                        color: '#333333',
+                        color: theme.colors.textPrimary,
                     }}
                 />
 
                 {/* Conditions List */}
                 <View style={styles.conditionsContainer}>
                     {conditions.map((condition) => (
-                        <View key={condition.id} style={styles.conditionCard}>
-                            <View style={styles.conditionHeader}>
-                                <Text style={styles.conditionName}>{condition.name}</Text>
-                                <TouchableOpacity
-                                    style={styles.editButton}
-                                    onPress={() => handleEditCondition(condition)}
-                                >
-                                    <Ionicons name="pencil" size={16} color="white" />
-                                    <Text style={styles.editButtonText}>edit</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={styles.conditionDetails}>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Date diagnosed:</Text>
-                                    <Text style={styles.detailValue}>{condition.dateDiagnosed}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Type:</Text>
-                                    <Text style={styles.detailValue}>{condition.type}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Status:</Text>
-                                    <Text style={styles.detailValue}>{condition.status}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Notes:</Text>
-                                    <Text style={styles.detailValue}>{condition.notes}</Text>
-                                </View>
-                            </View>
-                        </View>
+                        <HealthItemCard
+                            key={condition.id}
+                            title={condition.name}
+                            details={[
+                                { label: 'Date diagnosed:', value: condition.dateDiagnosed },
+                                { label: 'Type:', value: condition.type },
+                                { label: 'Status:', value: condition.status },
+                                { label: 'Notes:', value: condition.notes },
+                            ]}
+                            onEdit={() => handleEditCondition(condition)}
+                        />
                     ))}
 
                     <Button
@@ -149,66 +135,14 @@ const ConditionsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: theme.colors.background,
     },
     content: {
         flex: 1,
-        paddingHorizontal: 25,
+        paddingHorizontal: theme.spacing.lg,
     },
     conditionsContainer: {
         marginTop: 20,
-    },
-    conditionCard: {
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 20,
-        marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    conditionHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    conditionName: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333333',
-    },
-    editButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: theme.colors.asteriskPink,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 8,
-    },
-    editButtonText: {
-        color: 'white',
-        fontSize: 14,
-        fontWeight: '600',
-        marginLeft: 4,
-    },
-    conditionDetails: {
-        gap: 8,
-    },
-    detailRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    detailLabel: {
-        fontSize: 14,
-        color: '#666666',
-    },
-    detailValue: {
-        fontSize: 14,
-        color: '#333333',
-        fontWeight: '500',
     },
     addButton: {
         marginBottom: 20,

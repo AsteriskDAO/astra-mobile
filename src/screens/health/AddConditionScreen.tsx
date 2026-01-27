@@ -5,12 +5,16 @@ import { Ionicons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Label from '../../components/Label';
+import SearchableInput from '../../components/SearchableInput';
 import SecondaryHeader from '../../components/SecondaryHeader';
 import DiscardChangesModal from '../../components/modals/DiscardChangesModal';
+import DatePickerModal from '../../components/modals/DatePickerModal';
 import { useFormState } from '../../hooks/useFormState';
 import { RootStackParamList } from '../../types/navigation';
 import { Condition } from '../../types/health';
 import { theme } from '../../theme/theme';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { HEALTH_CONDITIONS } from '../../constants/healthConditions';
 
 type AddConditionScreenRouteProp = RouteProp<RootStackParamList, 'AddConditionScreen'>;
 
@@ -18,7 +22,7 @@ const AddConditionScreen: React.FC = () => {
     const navigation = useNavigation();
     const route = useRoute<AddConditionScreenRouteProp>();
     const isEdit = route.params?.condition;
-    
+
     const { formData, handleChange, hasChanges, setFormData } = useFormState({
         conditionName: '',
         dateDiagnosed: '',
@@ -26,8 +30,9 @@ const AddConditionScreen: React.FC = () => {
         status: '',
         notes: '',
     });
-    
+
     const [showDiscardModal, setShowDiscardModal] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     useEffect(() => {
         if (isEdit) {
@@ -59,6 +64,30 @@ const AddConditionScreen: React.FC = () => {
         navigation.goBack();
     };
 
+    const formatDate = (date: Date): string => {
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    };
+
+    const parseDate = (dateString: string): Date | undefined => {
+        if (!dateString) return undefined;
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+            const month = parseInt(parts[0]) - 1;
+            const day = parseInt(parts[1]);
+            const year = parseInt(parts[2]);
+            return new Date(year, month, day);
+        }
+        return undefined;
+    };
+
+    const handleDateSelect = (date: Date) => {
+        handleChange('dateDiagnosed', formatDate(date));
+        setShowDatePicker(false);
+    };
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -74,16 +103,22 @@ const AddConditionScreen: React.FC = () => {
 
                 {/* Form Fields */}
                 <View style={styles.formContainer}>
-                    <Input
-                        label="Condition Name"
-                        value={formData.conditionName}
-                        onChangeText={(text) => handleChange('conditionName', text)}
-                        placeholder="Start typing"
-                    />
+                    <View style={styles.inputGroup}>
+                        <SearchableInput
+                            label="Condition Name"
+                            value={formData.conditionName}
+                            options={HEALTH_CONDITIONS}
+                            onSelect={(value) => handleChange('conditionName', value)}
+                            placeholder="Type to search conditions"
+                        />
+                    </View>
 
                     <View style={styles.inputGroup}>
                         <Label>Date Diagnosed</Label>
-                        <TouchableOpacity style={styles.dropdown}>
+                        <TouchableOpacity 
+                            style={styles.dropdown}
+                            onPress={() => setShowDatePicker(true)}
+                        >
                             <Text style={[styles.dropdownText, !formData.dateDiagnosed && styles.placeholder]}>
                                 {formData.dateDiagnosed || 'Select Date'}
                             </Text>
@@ -137,6 +172,15 @@ const AddConditionScreen: React.FC = () => {
                 onDiscard={handleDiscard}
                 onCancel={() => setShowDiscardModal(false)}
             />
+
+            {/* Date Picker Modal */}
+            <DatePickerModal
+                visible={showDatePicker}
+                initialDate={parseDate(formData.dateDiagnosed)}
+                onSave={handleDateSelect}
+                onCancel={() => setShowDatePicker(false)}
+                title="Select date"
+            />
         </View>
     );
 };
@@ -168,7 +212,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     dropdownText: {
-        fontSize: 16,
+        fontSize: FONT_SIZES.body,
         fontWeight: '400',
         color: '#272727',
         fontFamily: theme.typography.fontFamily.prompt,

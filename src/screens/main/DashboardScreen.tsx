@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import MetricsCards from '../../components/MetricsCards';
@@ -8,9 +9,13 @@ import WhatsNextSection from '../../components/WhatsNextSection';
 import { useTab } from '../../contexts/TabContext';
 import { theme } from '../../theme/theme';
 import { useFixedHeaderHeight } from '../../hooks/useFixedHeaderHeight';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type DashboardScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MainContainer'>;
 
 const DashboardScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<DashboardScreenNavigationProp>();
     const headerHeight = useFixedHeaderHeight();
     const { setActiveTab } = useTab();
 
@@ -18,7 +23,7 @@ const DashboardScreen: React.FC = () => {
         // Switch to chat tab to show DailyCheckinScreen
         setActiveTab('chat');
         // Navigate to MainContainer if we're on a sub-screen
-        navigation.navigate('MainContainer' as never);
+        navigation.navigate('MainContainer');
     };
 
     const days = [
@@ -101,15 +106,13 @@ const DashboardScreen: React.FC = () => {
                             iconSource: require('../../../assets/research-invite.svg'),
                             title: 'Research invite',
                             subtitle: "You've been invited to join Study XYZ",
-                            onPress: () => navigation.navigate('ResearchInvite' as never),
+                            onPress: () => navigation.navigate('ResearchInvite'),
                         },
                         {
                             iconSource: require('../../../assets/vote.svg'),
                             title: 'Cast your vote',
                             subtitle: "Help shape AsteriskDAO's next step.",
-                            onPress: () => {
-                                // Navigate to voting screen when implemented
-                            },
+                            onPress: () => navigation.navigate('VotingScreen', {}),
                         },
                     ]}
                 />
@@ -121,26 +124,27 @@ const DashboardScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F8F8',
+        backgroundColor: theme.colors.background,
     },
     content: {
         flex: 1,
-        paddingHorizontal: 25,
+        paddingHorizontal: theme.spacing.lg,
     },
     scrollContent: {
-        paddingBottom: 20,
+        paddingBottom: theme.spacing.lg,
     },
     greeting: {
         fontFamily: 'Prompt',
-        fontSize: 15,
+        fontSize: FONT_SIZES.h3,
         fontWeight: '500',
-        color: '#232323',
+        color: theme.colors.textPrimary,
     },
     asterisk: {
-        fontSize: 16,
-        color: '#FF01B4',
+        fontSize: FONT_SIZES.body,
+        color: theme.colors.asteriskPink,
     },
     dateSelector: {
+        marginTop: theme.spacing.sm,
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 24,
@@ -150,7 +154,7 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 10,
         borderWidth: 2,
-        borderColor: '#CAE0E7',
+        borderColor: theme.colors.oceanLight,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'transparent',
@@ -159,57 +163,57 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(202, 224, 231, 0.57)',
     },
     dateChipSelected: {
-        borderColor: '#61ABC5',
+        borderColor: theme.colors.ocean,
     },
     dateDay: {
         fontFamily: 'Prompt',
-        fontSize: 9,
-        color: '#61ABC5',
-        marginBottom: 4,
+        fontSize: FONT_SIZES.small,
+        color: theme.colors.ocean,
+        marginBottom: theme.spacing.xs,
     },
     dateDaySelected: {
-        color: '#1B1B1B',
+        color: theme.colors.textPrimary,
         fontWeight: '500',
     },
     dateNumber: {
         fontFamily: 'Prompt',
-        fontSize: 9,
-        color: '#61ABC5',
+        fontSize: FONT_SIZES.small,
+        color: theme.colors.ocean,
     },
     dateNumberSelected: {
-        color: '#1B1B1B',
+        color: theme.colors.textPrimary,
         fontWeight: '500',
     },
     checkinCard: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.white,
         borderRadius: 15,
-        padding: 20,
+        padding: theme.spacing.lg,
         marginBottom: 24,
         alignItems: 'center',
     },
     checkinSubtitle: {
         fontFamily: 'Prompt',
-        fontSize: 13,
-        color: '#949494',
-        marginBottom: 8,
+        fontSize: FONT_SIZES.subtitle,
+        color: theme.colors.textDisabled,
+        marginBottom: theme.spacing.xs,
     },
     checkinTitle: {
         fontFamily: 'Prompt',
-        fontSize: 18,
+        fontSize: FONT_SIZES.h4,
         fontWeight: '500',
-        color: '#232323',
+        color: theme.colors.textPrimary,
         textAlign: 'center',
-        marginBottom: 20,
+        marginBottom: theme.spacing.lg,
     },
     checkinButton: {
         width: '100%',
     },
     sectionTitle: {
         fontFamily: 'Prompt',
-        fontSize: 13,
+        fontSize: FONT_SIZES.title,
         fontWeight: '500',
-        color: '#232323',
-        marginBottom: 16,
+        color: theme.colors.textPrimary,
+        marginBottom: theme.spacing.base,
     },
     trendsButton: {
         marginBottom: 24,

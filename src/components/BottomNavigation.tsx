@@ -4,9 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
 import Logo from './Logo';
 
+export type BottomTabId = 'home' | 'community' | 'chat' | 'notifications' | 'settings';
+
 interface BottomNavigationProps {
-    activeTab?: 'home' | 'community' | 'chat' | 'notifications' | 'settings';
-    onTabPress: (tab: string) => void;
+    activeTab?: BottomTabId;
+    onTabPress: (tab: BottomTabId) => void;
 }
 
 const BottomNavigation: React.FC<BottomNavigationProps> = ({
@@ -41,26 +43,26 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
                     );
                 }
                 return (
-                <TouchableOpacity
-                    key={tab.id}
-                    style={styles.tab}
-                    onPress={() => onTabPress(tab.id)}
-                >
-                    <Ionicons
-                        name={tab.icon as any}
-                        size={21}
-                        color={activeTab === tab.id ? theme.colors.ocean : theme.colors.textDisabled}
-                    />
-                    <Text
-                        style={[
-                            styles.tabLabel,
-                            activeTab === tab.id && styles.activeTabLabel,
-                        ]}
+                    <TouchableOpacity
+                        key={tab.id}
+                        style={styles.tab}
+                        onPress={() => onTabPress(tab.id)}
                     >
-                        {tab.label}
-                    </Text>
-                    {activeTab === tab.id && <View style={styles.activeIndicator} />}
-                </TouchableOpacity>
+                        <Ionicons
+                            name={tab.icon as any}
+                            size={21}
+                            color={activeTab === tab.id ? theme.colors.ocean : theme.colors.textDisabled}
+                        />
+                        <Text
+                            style={[
+                                styles.tabLabel,
+                                activeTab === tab.id && styles.activeTabLabel,
+                            ]}
+                        >
+                            {tab.label}
+                        </Text>
+                        {activeTab === tab.id && <View style={styles.activeIndicator} />}
+                    </TouchableOpacity>
                 );
             })}
         </View>

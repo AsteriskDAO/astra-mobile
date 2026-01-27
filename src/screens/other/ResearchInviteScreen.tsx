@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import BackgroundPattern from '../../components/BackgroundPattern';
 import SecondaryHeader from '../../components/SecondaryHeader';
@@ -10,6 +11,10 @@ import { LAYOUT } from '../../constants/layout';
 import { apiService } from '../../services/api';
 import { useUser } from '../../contexts/UserContext';
 import { useApiCall } from '../../hooks/useApiCall';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type ResearchInviteScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ResearchInvite'>;
 
 interface ResearchInvite {
     id: string;
@@ -22,7 +27,7 @@ interface ResearchInvite {
 }
 
 const ResearchInviteScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<ResearchInviteScreenNavigationProp>();
     const route = useRoute();
     const { userHash } = useUser();
     const [invite, setInvite] = useState<ResearchInvite | null>(null);
@@ -50,19 +55,20 @@ const ResearchInviteScreen: React.FC = () => {
 
     const loadInvite = async () => {
         if (!inviteId) {
-            // If no invite ID, try to get the first available invite
-            try {
-                // TODO: Uncomment API calls when ready
-                // const invites = await apiService.getResearchInvites();
-                // if (invites.length > 0) {
-                //     setInvite(invites[0]);
-                //     await loadUserStatus(invites[0].id);
-                // }
-            } catch (error) {
-                console.error('Failed to load invites:', error);
-            } finally {
+            // If no invite ID, use dummy data for testing
+            setIsLoading(true);
+            setTimeout(() => {
+                setInvite({
+                    id: 'dummy-1',
+                    title: 'PCOS Research Study',
+                    message: 'We are conducting a research study on Polycystic Ovary Syndrome (PCOS) and would like to invite you to participate. This study aims to better understand the experiences and needs of women with PCOS.',
+                    type: 'Clinical Trial',
+                    client: 'Women\'s Health Research Institute',
+                    link: 'https://example.com/study',
+                    isPrivate: false,
+                });
                 setIsLoading(false);
-            }
+            }, 500);
             return;
         }
 
@@ -72,17 +78,30 @@ const ResearchInviteScreen: React.FC = () => {
             // const inviteData = await apiService.getResearchInviteById(inviteId);
             // setInvite(inviteData);
             // await loadUserStatus(inviteId);
+
+            // Temporary: Use dummy data for testing
+            setTimeout(() => {
+                setInvite({
+                    id: inviteId,
+                    title: 'PCOS Research Study',
+                    message: 'We are conducting a research study on Polycystic Ovary Syndrome (PCOS) and would like to invite you to participate. This study aims to better understand the experiences and needs of women with PCOS.',
+                    type: 'Clinical Trial',
+                    client: 'Women\'s Health Research Institute',
+                    link: 'https://example.com/study',
+                    isPrivate: false,
+                });
+                setIsLoading(false);
+            }, 500);
         } catch (error) {
             Alert.alert('Error', 'Failed to load research invite');
             console.error('Failed to load invite:', error);
-        } finally {
             setIsLoading(false);
         }
     };
 
     const loadUserStatus = async (id: string) => {
         if (!userHash) return;
-        
+
         try {
             // TODO: Uncomment API calls when ready
             // const status = await apiService.getResearchInviteUserStatus(id, userHash);
@@ -97,10 +116,10 @@ const ResearchInviteScreen: React.FC = () => {
     };
 
     const handleCountMeIn = async () => {
-        if (!invite || !userHash) {
-            Alert.alert('Error', 'User information not available');
-            return;
-        }
+        // if (!invite || !userHash) {
+        //     Alert.alert('Error', 'User information not available');
+        //     return;
+        // }
 
         // TODO: Uncomment API calls when ready
         // await executeResponse(async () => {
@@ -112,7 +131,7 @@ const ResearchInviteScreen: React.FC = () => {
         //     setIsInterested(true);
         //     return result;
         // });
-        
+
         // Temporary: Update UI for testing
         setHasResponded(true);
         setIsInterested(true);
@@ -134,7 +153,7 @@ const ResearchInviteScreen: React.FC = () => {
         //     setIsInterested(false);
         //     return result;
         // });
-        
+
         // Temporary: Update UI for testing
         setHasResponded(true);
         setIsInterested(false);
@@ -188,7 +207,7 @@ const ResearchInviteScreen: React.FC = () => {
                     title="Research Invite"
                     onBack={() => navigation.goBack()}
                     rightElement={
-                        <TouchableOpacity onPress={() => navigation.navigate('Profile' as never)}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                             <Ionicons name="person-outline" size={24} color={theme.colors.textPrimary} />
                         </TouchableOpacity>
                     }
@@ -239,8 +258,8 @@ const ResearchInviteScreen: React.FC = () => {
                             <View style={styles.responseContainer}>
                                 <View style={styles.thankYouContainer}>
                                     <Text style={styles.thankYouText}>
-                                        {isInterested 
-                                            ? 'Thank you for your interest! We\'ll be in touch soon.' 
+                                        {isInterested
+                                            ? 'Thank you for your interest! We\'ll be in touch soon.'
                                             : 'Thank you for letting us know.'}
                                     </Text>
                                 </View>
@@ -307,7 +326,7 @@ const styles = StyleSheet.create({
     cardHeaderText: {
         ...theme.typography.presets.bodySmall,
         color: theme.colors.white,
-        fontSize: 12,
+        fontSize: FONT_SIZES.subtitle,
         fontWeight: '500',
     },
     cardBody: {
@@ -316,20 +335,20 @@ const styles = StyleSheet.create({
     studyTitle: {
         ...theme.typography.presets.h2,
         color: theme.colors.textPrimary,
-        fontSize: 18,
+        fontSize: FONT_SIZES.h4,
         fontWeight: '600',
         marginBottom: 12,
     },
     greeting: {
         ...theme.typography.presets.body,
         color: theme.colors.textPrimary,
-        fontSize: 14,
+        fontSize: FONT_SIZES.subtitle,
         marginBottom: 12,
     },
     description: {
         ...theme.typography.presets.body,
         color: theme.colors.textSecondary,
-        fontSize: 13,
+        fontSize: FONT_SIZES.h3,
         lineHeight: 20,
         marginBottom: 20,
     },
@@ -345,14 +364,14 @@ const styles = StyleSheet.create({
     detailText: {
         ...theme.typography.presets.body,
         color: theme.colors.textPrimary,
-        fontSize: 13,
+        fontSize: FONT_SIZES.h3,
         flex: 1,
         lineHeight: 20,
     },
     linkText: {
         ...theme.typography.presets.body,
         color: theme.colors.ocean,
-        fontSize: 13,
+        fontSize: FONT_SIZES.h3,
         flex: 1,
         lineHeight: 20,
         textDecorationLine: 'underline',
@@ -378,7 +397,7 @@ const styles = StyleSheet.create({
     thankYouText: {
         ...theme.typography.presets.body,
         color: '#4CAF50',
-        fontSize: 13,
+        fontSize: FONT_SIZES.h3,
         fontWeight: '500',
     },
     loadingContainer: {

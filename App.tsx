@@ -58,51 +58,51 @@ export default function App() {
       <UserProvider>
         <TabProvider>
           <View style={styles.container}>
-          <NavigationContainer>
-            <StatusBar style="auto" />
-            <Stack.Navigator
-              initialRouteName="Splash"
-              screenOptions={{
-                headerShown: false,
-                gestureEnabled: false,
-              }}
-            >
-              <Stack.Screen name="Splash" component={SplashScreen} />
-              <Stack.Screen name="Welcome" component={WelcomeScreen} />
-              <Stack.Screen name="IDVerification" component={IDVerificationScreen} />
-              <Stack.Screen name="VerificationFailed" component={VerificationFailedScreen} />
-              <Stack.Screen name="FinalVerificationSuccess" component={FinalVerificationSuccessScreen} />
-              <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="TelegramLogin" component={TelegramLoginScreen} />
-              <Stack.Screen name="ProfileIntro" component={ProfileIntroScreen} />
-              <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
-              <Stack.Screen name="ProfileSaved" component={ProfileSavedScreen} />
+            <NavigationContainer>
+              <StatusBar style="auto" />
+              <Stack.Navigator
+                initialRouteName="Splash"
+                screenOptions={{
+                  headerShown: false,
+                  gestureEnabled: false,
+                }}
+              >
+                <Stack.Screen name="Splash" component={SplashScreen} />
+                <Stack.Screen name="Welcome" component={WelcomeScreen} />
+                <Stack.Screen name="IDVerification" component={IDVerificationScreen} />
+                <Stack.Screen name="VerificationFailed" component={VerificationFailedScreen} />
+                <Stack.Screen name="FinalVerificationSuccess" component={FinalVerificationSuccessScreen} />
+                <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="TelegramLogin" component={TelegramLoginScreen} />
+                <Stack.Screen name="ProfileIntro" component={ProfileIntroScreen} />
+                <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
+                <Stack.Screen name="ProfileSaved" component={ProfileSavedScreen} />
 
-              {/* Main container - handles tab switching without navigation */}
-              <Stack.Screen name="MainContainer" component={MainContainerScreen} />
+                {/* Main container - handles tab switching without navigation */}
+                <Stack.Screen name="MainContainer" component={MainContainerScreen} />
 
-              {/* Sub-screens - pushed on top of MainContainer */}
-              <Stack.Screen name="Profile" component={ProfileScreen} />
-              <Stack.Screen name="ProfileInformation" component={ProfileInformationScreen} />
-              <Stack.Screen name="ConditionsScreen" component={ConditionsScreen} />
-              <Stack.Screen name="AddConditionScreen" component={AddConditionScreen} />
-              <Stack.Screen name="MedicationsScreen" component={MedicationsScreen} />
-              <Stack.Screen name="AddMedicationScreen" component={AddMedicationScreen} />
-              <Stack.Screen name="TreatmentsScreen" component={TreatmentsScreen} />
-              <Stack.Screen name="AddTreatmentScreen" component={AddTreatmentScreen} />
-              <Stack.Screen name="DayStreakScreen" component={DayStreakScreen} />
-              <Stack.Screen name="VotingScreen" component={VotingScreen} />
-              <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
-              <Stack.Screen name="EditEmail" component={EditEmailScreen} />
-              <Stack.Screen name="NotificationsSettings" component={NotificationsSettingsScreen} />
-              <Stack.Screen name="AppFeedback" component={AppFeedbackScreen} />
-              <Stack.Screen name="ResearchInvite" component={ResearchInviteScreen} />
-            </Stack.Navigator>
-            {/* Persistent bottom navigation - single instance, persists across all screens */}
-            <PersistentBottomNav />
-          </NavigationContainer>
-        </View>
+                {/* Sub-screens - pushed on top of MainContainer */}
+                <Stack.Screen name="Profile" component={ProfileScreen} />
+                <Stack.Screen name="ProfileInformation" component={ProfileInformationScreen} />
+                <Stack.Screen name="ConditionsScreen" component={ConditionsScreen} />
+                <Stack.Screen name="AddConditionScreen" component={AddConditionScreen} />
+                <Stack.Screen name="MedicationsScreen" component={MedicationsScreen} />
+                <Stack.Screen name="AddMedicationScreen" component={AddMedicationScreen} />
+                <Stack.Screen name="TreatmentsScreen" component={TreatmentsScreen} />
+                <Stack.Screen name="AddTreatmentScreen" component={AddTreatmentScreen} />
+                <Stack.Screen name="DayStreakScreen" component={DayStreakScreen} />
+                <Stack.Screen name="VotingScreen" component={VotingScreen} />
+                <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+                <Stack.Screen name="EditEmail" component={EditEmailScreen} />
+                <Stack.Screen name="NotificationsSettings" component={NotificationsSettingsScreen} />
+                <Stack.Screen name="AppFeedback" component={AppFeedbackScreen} />
+                <Stack.Screen name="ResearchInvite" component={ResearchInviteScreen} />
+              </Stack.Navigator>
+              {/* Persistent bottom navigation - single instance, persists across all screens */}
+              <PersistentBottomNav />
+            </NavigationContainer>
+          </View>
         </TabProvider>
       </UserProvider>
     </SafeAreaProvider>

@@ -1,17 +1,22 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import BackgroundPattern from '../../components/BackgroundPattern';
 import { theme } from '../../theme/theme';
 import { useFixedHeaderHeight } from '../../hooks/useFixedHeaderHeight';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type CommunityScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MainContainer'>;
 
 const CommunityScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<CommunityScreenNavigationProp>();
     const headerHeight = useFixedHeaderHeight();
 
     const handleVotingPress = (votingId: string) => {
-        navigation.navigate('VotingScreen' as never);
+        navigation.navigate('VotingScreen', {});
     };
 
     return (
@@ -106,7 +111,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: theme.spacing.contentPaddingHorizontal,
     },
     scrollContent: {
-        paddingBottom: 20,
+        paddingBottom: theme.spacing.lg,
     },
     section: {
         marginBottom: theme.spacing.xl,
@@ -141,16 +146,20 @@ const styles = StyleSheet.create({
         marginRight: theme.spacing.base,
     },
     cardTitle: {
-        ...theme.typography.presets.h3,
+        fontFamily: theme.typography.fontFamily.prompt,
+        fontSize: FONT_SIZES.title,
+        fontWeight: '500',
         color: theme.colors.textSecondary,
         marginBottom: 4,
     },
     cardSubtitle: {
-        ...theme.typography.presets.bodySmall,
+        fontFamily: theme.typography.fontFamily.prompt,
+        fontSize: FONT_SIZES.subtitle,
+        fontWeight: '400',
         color: theme.colors.textPlaceholder,
     },
     comingSoonCard: {
-        backgroundColor: '#E0E0E0',
+        backgroundColor: theme.colors.borderLight,
         borderRadius: 10,
         padding: theme.spacing.base,
         flexDirection: 'row',
@@ -159,12 +168,14 @@ const styles = StyleSheet.create({
         minHeight: 40,
     },
     comingSoonTitle: {
-        ...theme.typography.presets.h3,
+        fontFamily: theme.typography.fontFamily.prompt,
+        fontSize: FONT_SIZES.title,
+        fontWeight: '500',
         color: theme.colors.white,
     },
     comingSoonText: {
         ...theme.typography.presets.label,
-        color: '#9F9F9F',
+        color: theme.colors.textPlaceholder,
     },
     articleCard: {
         backgroundColor: theme.colors.white,
@@ -177,7 +188,9 @@ const styles = StyleSheet.create({
         minHeight: 40,
     },
     articleTitle: {
-        ...theme.typography.presets.h3,
+        fontFamily: theme.typography.fontFamily.prompt,
+        fontSize: FONT_SIZES.title,
+        fontWeight: '500',
         color: theme.colors.textSecondary,
     },
 });

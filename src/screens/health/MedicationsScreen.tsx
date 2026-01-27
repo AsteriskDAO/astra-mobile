@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import SecondaryHeader from '../../components/SecondaryHeader';
+import HealthItemCard from '../../components/HealthItemCard';
 import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
 import { Medication } from '../../types/health';
 import { theme } from '../../theme/theme';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type MedicationsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MedicationsScreen'>;
 
 const MedicationsScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<MedicationsScreenNavigationProp>();
     const [medications, setMedications] = useState<Medication[]>([
         {
             id: '1',
@@ -26,7 +32,7 @@ const MedicationsScreen: React.FC = () => {
     const [selectedMedication, setSelectedMedication] = useState<Medication | null>(null);
 
     const handleAddMedication = () => {
-        navigation.navigate('AddMedicationScreen' as never);
+        navigation.navigate('AddMedicationScreen', {});
     };
 
     const handleEditMedication = (medication: Medication) => {
@@ -59,52 +65,26 @@ const MedicationsScreen: React.FC = () => {
                     icon={{
                         name: 'medical-outline',
                         size: 20,
-                        color: '#333333',
+                        color: theme.colors.textPrimary,
                     }}
                 />
 
                 {/* Medications List */}
                 <View style={styles.medicationsContainer}>
                     {medications.map((medication) => (
-                        <View key={medication.id} style={styles.medicationCard}>
-                            <View style={styles.medicationHeader}>
-                                <Text style={styles.medicationName}>{medication.name}</Text>
-                                <TouchableOpacity
-                                    style={styles.editButton}
-                                    onPress={() => handleEditMedication(medication)}
-                                >
-                                    <Ionicons name="pencil" size={16} color="white" />
-                                    <Text style={styles.editButtonText}>edit</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={styles.medicationDetails}>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Start Date:</Text>
-                                    <Text style={styles.detailValue}>{medication.startDate}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Type:</Text>
-                                    <Text style={styles.detailValue}>{medication.type}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Status:</Text>
-                                    <Text style={styles.detailValue}>{medication.status}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Dosage:</Text>
-                                    <Text style={styles.detailValue}>{medication.dosage}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Frequency:</Text>
-                                    <Text style={styles.detailValue}>{medication.frequency}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Text style={styles.detailLabel}>Notes:</Text>
-                                    <Text style={styles.detailValue}>{medication.notes}</Text>
-                                </View>
-                            </View>
-                        </View>
+                        <HealthItemCard
+                            key={medication.id}
+                            title={medication.name}
+                            details={[
+                                { label: 'Start Date:', value: medication.startDate },
+                                { label: 'Type:', value: medication.type },
+                                { label: 'Status:', value: medication.status },
+                                { label: 'Dosage:', value: medication.dosage },
+                                { label: 'Frequency:', value: medication.frequency },
+                                { label: 'Notes:', value: medication.notes },
+                            ]}
+                            onEdit={() => handleEditMedication(medication)}
+                        />
                     ))}
 
                     <Button
@@ -151,66 +131,14 @@ const MedicationsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: theme.colors.background,
     },
     content: {
         flex: 1,
-        paddingHorizontal: 25,
+        paddingHorizontal: theme.spacing.lg,
     },
     medicationsContainer: {
         marginTop: 20,
-    },
-    medicationCard: {
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 20,
-        marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    medicationHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    medicationName: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333333',
-    },
-    editButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: theme.colors.asteriskPink,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 8,
-    },
-    editButtonText: {
-        color: 'white',
-        fontSize: 14,
-        fontWeight: '600',
-        marginLeft: 4,
-    },
-    medicationDetails: {
-        gap: 8,
-    },
-    detailRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    detailLabel: {
-        fontSize: 14,
-        color: '#666666',
-    },
-    detailValue: {
-        fontSize: 14,
-        color: '#333333',
-        fontWeight: '500',
     },
     addButton: {
         marginBottom: 20,

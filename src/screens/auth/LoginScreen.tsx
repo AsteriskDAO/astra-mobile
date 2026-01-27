@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -13,9 +14,12 @@ import { apiService } from '../../services/api';
 import { useUser } from '../../contexts/UserContext';
 import { useApiCall } from '../../hooks/useApiCall';
 import { validateEmail, validateRequired } from '../../utils/validation';
+import { RootStackParamList } from '../../types/navigation';
+
+type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<LoginScreenNavigationProp>();
     const insets = useSafeAreaInsets();
     const { setUser } = useUser();
     const [formData, setFormData] = useState({
@@ -27,24 +31,12 @@ const LoginScreen: React.FC = () => {
         showErrorAlert: true,
         errorMessage: 'Invalid credentials',
         onSuccess: () => {
-            navigation.navigate('MainContainer' as never);
+            navigation.navigate('MainContainer');
         },
     });
 
     const handleLogin = async () => {
-        // Validate form
-        const emailValidation = validateEmail(formData.email);
-        if (!emailValidation.isValid) {
-            Alert.alert('Error', emailValidation.error);
-            return;
-        }
-
-        const passwordValidation = validateRequired(formData.password, 'Password');
-        if (!passwordValidation.isValid) {
-            Alert.alert('Error', passwordValidation.error);
-            return;
-        }
-
+        // Accept any dummy content and proceed to next step
         // Execute login
         // TODO: Uncomment API calls when ready
         // const response = await execute(async () => {
@@ -52,22 +44,22 @@ const LoginScreen: React.FC = () => {
         //         email: formData.email,
         //         password: formData.password,
         //     });
-            
+
         //     // Fetch full user data and save to context
         //     if (loginResponse.user.userHash) {
         //         const userData = await apiService.getUser(loginResponse.user.userHash);
         //         setUser(userData);
         //     }
-            
+
         //     return loginResponse;
         // });
-        
-        // Temporary: Navigate directly for testing
-        navigation.navigate('MainContainer' as never);
+
+        // Temporary: Navigate directly for testing (accepts any dummy content)
+        navigation.navigate('MainContainer');
     };
 
     const handleTelegramLogin = () => {
-        navigation.navigate('TelegramLogin' as never);
+        navigation.navigate('TelegramLogin');
     };
 
     return (
@@ -76,7 +68,7 @@ const LoginScreen: React.FC = () => {
             <BackButton
                 onPress={() => navigation.goBack()}
                 size={17}
-                style={[styles.backButton,{ top: insets.top }]}
+                style={[styles.backButton, { top: insets.top }]}
             />
 
             <View style={styles.content}>
@@ -94,6 +86,7 @@ const LoginScreen: React.FC = () => {
                         <View style={styles.formContainer}>
                             <Input
                                 label="Email"
+                                placeholder="email@asteriskdao.xyz"
                                 value={formData.email}
                                 onChangeText={(text) => setFormData({ ...formData, email: text })}
                                 style={styles.input}
@@ -101,6 +94,7 @@ const LoginScreen: React.FC = () => {
 
                             <Input
                                 label="Password"
+                                placeholder="****"
                                 value={formData.password}
                                 onChangeText={(text) => setFormData({ ...formData, password: text })}
                                 secureTextEntry

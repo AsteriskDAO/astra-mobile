@@ -1,13 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import Button from '../../components/Button';
 import BackgroundPattern from '../../components/BackgroundPattern';
 import { theme } from '../../theme/theme';
 import { commonStyles } from '../../styles/common';
+import { RootStackParamList } from '../../types/navigation';
+
+type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Welcome'>;
 
 const WelcomeScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<WelcomeScreenNavigationProp>();
 
     return (
         <View style={styles.container}>
@@ -20,12 +24,12 @@ const WelcomeScreen: React.FC = () => {
                 <View style={styles.buttonContainer}>
                     <Button
                         title="I am new to Astra"
-                        onPress={() => navigation.navigate('CreateAccount' as never)}
+                        onPress={() => navigation.navigate('CreateAccount')}
                     />
 
                     <Button
                         title="I have an Astra account"
-                        onPress={() => navigation.navigate('Login' as never)}
+                        onPress={() => navigation.navigate('Login')}
                         variant="outline"
                     />
                 </View>

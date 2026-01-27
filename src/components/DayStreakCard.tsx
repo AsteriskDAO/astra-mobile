@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
+import { FONT_SIZES } from '../constants/fontSizes';
 
 interface DayStreakCardProps {
     streakCount: number;
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
     },
     streakTitle: {
         fontFamily: theme.typography.fontFamily.prompt,
-        fontSize: 13,
+        fontSize: FONT_SIZES.title,
         fontWeight: '500',
         color: theme.colors.textPrimary,
     },
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
     },
     streakNumber: {
         fontFamily: theme.typography.fontFamily.prompt,
-        fontSize: 14,
+        fontSize: FONT_SIZES.title,
         fontWeight: '500',
         color: theme.colors.textPrimary,
     },

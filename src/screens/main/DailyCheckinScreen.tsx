@@ -20,6 +20,7 @@ import { apiService } from '../../services/api';
 import { useUser } from '../../contexts/UserContext';
 import { useApiCall } from '../../hooks/useApiCall';
 import { getErrorMessage } from '../../utils/errorHandling';
+import { FONT_SIZES } from '../../constants/fontSizes';
 
 interface Message {
     id: string;
@@ -121,7 +122,7 @@ const DailyCheckinScreen: React.FC = () => {
         //         fatigue_level: checkInData.fatigue_level,
         //     });
         // });
-        
+
         // Temporary: Show success message for testing
         Alert.alert('Success', 'Check-in submitted successfully!', [
             { text: 'OK', onPress: () => navigation.goBack() }
@@ -205,8 +206,8 @@ const DailyCheckinScreen: React.FC = () => {
                     <Ionicons name="mic" size={20} color={theme.colors.ocean} />
                 </TouchableOpacity>
                 {messages.length > 1 ? (
-                    <TouchableOpacity 
-                        style={[styles.sendButton, isSubmitting && styles.sendButtonDisabled]} 
+                    <TouchableOpacity
+                        style={[styles.sendButton, isSubmitting && styles.sendButtonDisabled]}
                         onPress={handleSubmitCheckIn}
                         disabled={isSubmitting}
                     >
@@ -215,8 +216,8 @@ const DailyCheckinScreen: React.FC = () => {
                         </Text>
                     </TouchableOpacity>
                 ) : (
-                    <TouchableOpacity 
-                        style={styles.sendButton} 
+                    <TouchableOpacity
+                        style={styles.sendButton}
                         onPress={handleSend}
                         disabled={isSubmitting}
                     >
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     messageText: {
-        fontSize: 16,
+        fontSize: FONT_SIZES.body,
         lineHeight: 20,
     },
     userText: {
@@ -300,7 +301,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         maxHeight: 100,
         borderWidth: 0,
-        fontSize: 16,
+        fontSize: FONT_SIZES.input,
         fontWeight: '400',
         color: '#272727',
         fontFamily: theme.typography.fontFamily.prompt,
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
     },
     sendButtonText: {
         color: 'white',
-        fontSize: 16,
+        fontSize: FONT_SIZES.button,
         fontWeight: '400',
         fontFamily: theme.typography.fontFamily.prompt,
         textAlign: 'center',

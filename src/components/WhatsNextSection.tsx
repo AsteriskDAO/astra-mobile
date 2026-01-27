@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextStyle, ImageSourcePropType } from 'react-na
 import ActionCard from './ActionCard';
 import { theme } from '../theme/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { FONT_SIZES } from '../constants/fontSizes';
 
 export interface ActionItem {
     icon?: {
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: theme.typography.fontFamily.prompt,
-        fontSize: 13,
+        fontSize: FONT_SIZES.title,
         fontWeight: '500',
         color: '#232323',
         marginBottom: 16,

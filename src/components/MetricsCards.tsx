@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { theme } from '../theme/theme';
+import { FONT_SIZES } from '../constants/fontSizes';
 
 interface MetricCardProps {
     value: string;
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     },
     metricNumber: {
         fontFamily: theme.typography.fontFamily.prompt,
-        fontSize: 15,
+        fontSize: FONT_SIZES.body,
         fontWeight: '500',
         color: theme.colors.textPrimary,
         marginBottom: 4,
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
 
     metricLabel: {
         fontFamily: theme.typography.fontFamily.prompt,
-        fontSize: 10,
+        fontSize: FONT_SIZES.subtitle,
         fontWeight: '400',
         color: theme.colors.textDisabled,
         textAlign: 'center',

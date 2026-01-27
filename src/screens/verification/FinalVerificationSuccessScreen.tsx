@@ -1,13 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import Button from '../../components/Button';
 import BackgroundPattern from '../../components/BackgroundPattern';
 import { theme } from '../../theme/theme';
 import { commonStyles } from '../../styles/common';
+import { RootStackParamList } from '../../types/navigation';
+
+type FinalVerificationSuccessScreenNavigationProp = StackNavigationProp<RootStackParamList, 'FinalVerificationSuccess'>;
 
 const FinalVerificationSuccessScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<FinalVerificationSuccessScreenNavigationProp>();
 
     return (
         <View style={styles.container}>
@@ -27,7 +31,7 @@ const FinalVerificationSuccessScreen: React.FC = () => {
                 <View style={styles.buttonContainer}>
                     <Button
                         title="Start your daily check-in"
-                        onPress={() => navigation.navigate('MainContainer' as never)}
+                        onPress={() => navigation.navigate('MainContainer')}
                         variant="primary"
                     />
                 </View>
@@ -42,7 +46,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        paddingHorizontal: 25,
+        paddingHorizontal: theme.spacing.lg,
         paddingTop: theme.spacing.titleMarginTop,
         paddingBottom: theme.spacing.formMarginBottom,
     },

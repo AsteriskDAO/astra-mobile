@@ -1,15 +1,20 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import BackgroundPattern from '../../components/BackgroundPattern';
 import { theme } from '../../theme/theme';
 import { useFixedHeaderHeight } from '../../hooks/useFixedHeaderHeight';
 import { LAYOUT } from '../../constants/layout';
 import { SettingItem } from '../../types/settings';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type SettingsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MainContainer'>;
 
 const SettingsScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<SettingsScreenNavigationProp>();
     const headerHeight = useFixedHeaderHeight();
     const email = 'hi@asterisk.xyz';
 
@@ -24,15 +29,15 @@ const SettingsScreen: React.FC = () => {
     };
 
     const handleEmailPress = () => {
-        navigation.navigate('EditEmail' as never);
+        navigation.navigate('EditEmail');
     };
 
     const handleChangePasswordPress = () => {
-        navigation.navigate('ChangePassword' as never);
+        navigation.navigate('ChangePassword');
     };
 
     const handleNotificationsPress = () => {
-        navigation.navigate('NotificationsSettings' as never);
+        navigation.navigate('NotificationsSettings');
     };
 
     const handleToneOfAIPress = () => {
@@ -40,19 +45,39 @@ const SettingsScreen: React.FC = () => {
     };
 
     const handleSubmitFeedbackPress = () => {
-        navigation.navigate('AppFeedback' as never);
+        navigation.navigate('AppFeedback');
     };
 
-    const handleFAQPress = () => {
-        // Navigate to FAQ
+    const handleFAQPress = async () => {
+        const url = 'https://asteriskdao.xyz/faq/';
+        try {
+            const supported = await Linking.canOpenURL(url);
+            if (supported) {
+                await Linking.openURL(url);
+            } else {
+                Alert.alert('Error', 'Unable to open FAQ link');
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to open FAQ link');
+        }
     };
 
     const handleTermsPress = () => {
         // Navigate to Terms of Use
     };
 
-    const handlePrivacyPress = () => {
-        // Navigate to Privacy Policy
+    const handlePrivacyPress = async () => {
+        const url = 'https://asteriskdao.xyz/privacy-policy/';
+        try {
+            const supported = await Linking.canOpenURL(url);
+            if (supported) {
+                await Linking.openURL(url);
+            } else {
+                Alert.alert('Error', 'Unable to open Privacy Policy link');
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to open Privacy Policy link');
+        }
     };
 
     const handleLogoutPress = () => {
@@ -126,7 +151,12 @@ const SettingsScreen: React.FC = () => {
 
     const renderSettingItem = (item: SettingItem) => (
         <TouchableOpacity key={item.id} style={styles.settingItem} onPress={item.onPress}>
-            <Ionicons name={item.icon as any} size={LAYOUT.SETTING_ITEM_ICON_SIZE} color={theme.colors.ocean} style={styles.settingIcon} />
+            <Ionicons
+                name={item.icon}
+                size={LAYOUT.SETTING_ITEM_ICON_SIZE}
+                color={theme.colors.ocean}
+                style={styles.settingIcon}
+            />
             <Text style={styles.settingLabel}>{item.label}</Text>
             {item.value && <Text style={styles.emailValue}>{item.value}</Text>}
             {item.showCopyButton && item.onCopy && (
@@ -186,7 +216,7 @@ const styles = StyleSheet.create({
         marginTop: 37, // Spacing between Settings header and Account text
     },
     sectionTitle: {
-        fontSize: 12,
+        fontSize: FONT_SIZES.subtitle,
         lineHeight: 18,
         fontWeight: '400',
         fontFamily: 'Prompt',
@@ -212,20 +242,20 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: LAYOUT.SETTING_ITEM_LABEL_LEFT,
         top: '50%',
-        marginTop: -LAYOUT.SETTING_ITEM_LABEL_LINE_HEIGHT / 2,
-        fontSize: LAYOUT.SETTING_ITEM_LABEL_FONT_SIZE,
-        lineHeight: LAYOUT.SETTING_ITEM_LABEL_LINE_HEIGHT,
+        marginTop: -9, // Half of 18px line height
+        fontSize: FONT_SIZES.title,
+        lineHeight: 18,
         fontWeight: '500',
         fontFamily: 'Prompt',
-        color: '#232323',
+        color: theme.colors.textPrimary,
     },
     emailValue: {
         position: 'absolute',
         right: 35, // Space for copy button (12px icon + 11px from right + 12px spacing)
         top: '50%',
-        marginTop: -5, // Half of 10px line height
-        fontSize: 10,
-        lineHeight: 10, // 105% of 10px
+        marginTop: -9, // Half of 18px line height
+        fontSize: FONT_SIZES.body,
+        lineHeight: 18,
         fontWeight: '400',
         fontFamily: 'Prompt',
         color: theme.colors.textDisabled,

@@ -1,12 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import BottomNavigation from './BottomNavigation';
 import { useTab } from '../contexts/TabContext';
 import { getActiveTab } from '../utils/navigation';
+import { RootStackParamList } from '../types/navigation';
+import { theme } from '../theme/theme';
+
+type PersistentBottomNavNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const PersistentBottomNav: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<PersistentBottomNavNavigationProp>();
     const { activeTab, setActiveTab } = useTab();
 
     // Get current route name from navigation state
@@ -30,7 +35,7 @@ const PersistentBottomNav: React.FC = () => {
         if (routeName && routeName !== 'MainContainer') {
             // Change tab first, then navigate back to MainContainer
             setActiveTab(tab as any);
-            navigation.navigate('MainContainer' as never);
+            navigation.navigate('MainContainer');
         } else {
             // We're already on MainContainer, just change the tab
             setActiveTab(tab as any);
@@ -74,7 +79,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#F8F8F8',
+        backgroundColor: theme.colors.background,
     },
 });
 

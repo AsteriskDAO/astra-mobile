@@ -1,11 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { theme } from '../../theme/theme';
+import { RootStackParamList } from '../../types/navigation';
+
+type SplashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Splash'>;
 
 const SplashScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<SplashScreenNavigationProp>();
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
@@ -26,7 +30,7 @@ const SplashScreen: React.FC = () => {
 
         // Navigate to welcome screen after 2-3 seconds
         const timer = setTimeout(() => {
-            navigation.navigate('Welcome' as never);
+            navigation.navigate('Welcome');
         }, 2500);
 
         return () => clearTimeout(timer);

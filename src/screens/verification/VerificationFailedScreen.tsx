@@ -1,11 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import Button from '../../components/Button';
 import { theme } from '../../theme/theme';
+import { FONT_SIZES } from '../../constants/fontSizes';
+import { RootStackParamList } from '../../types/navigation';
+
+type VerificationFailedScreenNavigationProp = StackNavigationProp<RootStackParamList, 'VerificationFailed'>;
 
 const VerificationFailedScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<VerificationFailedScreenNavigationProp>();
 
     const handleGetHelp = () => {
         // In a real app, this would open a support link or contact form
@@ -13,7 +18,7 @@ const VerificationFailedScreen: React.FC = () => {
     };
 
     const handleRetry = () => {
-        navigation.navigate('IDVerification' as never);
+        navigation.navigate('IDVerification');
     };
 
     return (
@@ -50,7 +55,7 @@ const VerificationFailedScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: theme.colors.background,
     },
     content: {
         flex: 1,
@@ -68,33 +73,33 @@ const styles = StyleSheet.create({
         marginBottom: 32,
     },
     xMark: {
-        fontSize: 40,
-        color: 'white',
+        fontSize: FONT_SIZES.displayMedium,
+        color: theme.colors.white,
         fontWeight: 'bold',
     },
     title: {
-        fontSize: 28,
+        fontSize: FONT_SIZES.h1,
         fontWeight: 'bold',
-        color: '#333333',
+        color: theme.colors.textPrimary,
         textAlign: 'center',
-        marginBottom: 16,
+        marginBottom: theme.spacing.base,
     },
     description: {
-        fontSize: 16,
-        color: '#666666',
+        fontSize: FONT_SIZES.body,
+        color: theme.colors.textLight,
         textAlign: 'center',
         lineHeight: 24,
         marginBottom: 40,
     },
     buttonContainer: {
         width: '100%',
-        gap: 16,
+        gap: theme.spacing.base,
     },
     helpButton: {
         backgroundColor: theme.colors.asteriskPink,
     },
     retryButton: {
-        backgroundColor: 'white',
+        backgroundColor: theme.colors.white,
         borderColor: theme.colors.asteriskPink,
         borderWidth: 1,
     },

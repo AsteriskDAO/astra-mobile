@@ -2,6 +2,8 @@
  * Typography system for Asterisk application
  * All font families, sizes, weights, and line heights
  */
+import { FONT_SIZES } from '../constants/fontSizes';
+
 export const typography = {
     // Font Families
     fontFamily: {
@@ -9,11 +11,8 @@ export const typography = {
         playfairDisplay: 'Playfair Display',
     },
 
-    // Font Sizes (only used ones)
-    fontSize: {
-        base: 10,
-        md: 12,
-    },
+    // Font Sizes - use FONT_SIZES constants
+    fontSize: FONT_SIZES,
 
     // Font Weights
     fontWeight: {
@@ -34,19 +33,19 @@ export const typography = {
         // Headings
         h1: {
             fontFamily: 'Prompt',
-            fontSize: 30,
+            fontSize: FONT_SIZES.h1,
             lineHeight: 31,
             fontWeight: '500',
         },
         h2: {
             fontFamily: 'Prompt',
-            fontSize: 22,
+            fontSize: FONT_SIZES.h2,
             lineHeight: 23,
             fontWeight: '400',
         },
         h3: {
             fontFamily: 'Prompt',
-            fontSize: 15,
+            fontSize: FONT_SIZES.h3,
             lineHeight: 16,
             fontWeight: '500',
         },
@@ -54,13 +53,13 @@ export const typography = {
         // Body Text
         body: {
             fontFamily: 'Prompt',
-            fontSize: 12,
-            lineHeight: 18,
+            fontSize: FONT_SIZES.subtitle,
+            lineHeight: 13,
             fontWeight: '400',
         },
         bodySmall: {
             fontFamily: 'Prompt',
-            fontSize: 11,
+            fontSize: FONT_SIZES.bodySmall,
             lineHeight: 13,
             fontWeight: '400',
         },
@@ -68,13 +67,13 @@ export const typography = {
         // Labels
         label: {
             fontFamily: 'Prompt',
-            fontSize: 10,
+            fontSize: FONT_SIZES.label,
             lineHeight: 15,
             fontWeight: '400',
         },
         labelFocused: {
             fontFamily: 'Prompt',
-            fontSize: 10,
+            fontSize: FONT_SIZES.label,
             lineHeight: 15,
             fontWeight: '400',
         },
@@ -82,7 +81,7 @@ export const typography = {
         // Button Text
         button: {
             fontFamily: 'Prompt',
-            fontSize: 11,
+            fontSize: FONT_SIZES.buttonSmall,
             lineHeight: 17,
             fontWeight: '500',
         },
@@ -90,7 +89,7 @@ export const typography = {
         // Navigation
         navLabel: {
             fontFamily: 'Prompt',
-            fontSize: 8,
+            fontSize: FONT_SIZES.navLabel,
             lineHeight: 8,
             fontWeight: '400',
         },
@@ -98,7 +97,7 @@ export const typography = {
         // Special
         welcomeTitle: {
             fontFamily: 'Playfair Display',
-            fontSize: 30,
+            fontSize: FONT_SIZES.h1,
             lineHeight: 40,
             fontWeight: '400',
         },
