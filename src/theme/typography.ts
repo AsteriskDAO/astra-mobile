@@ -89,7 +89,7 @@ export const typography = {
         // Navigation
         navLabel: {
             fontFamily: 'Prompt',
-            fontSize: FONT_SIZES.navLabel,
+            fontSize: FONT_SIZES.bodySmall,
             lineHeight: 8,
             fontWeight: '400',
         },

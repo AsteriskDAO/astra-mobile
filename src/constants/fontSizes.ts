@@ -17,16 +17,14 @@ export const FONT_SIZES = {
     h4: 18,              // Card titles (medium-large)
 
     // Special sizes
-    small: 9,            // Very small UI elements (date chips, etc.)
     button: 16,          // Button text
     input: 16,           // Input field text
-    navLabel: 12,         // Navigation labels
 
     // Display sizes (for large display elements)
     displayLarge: 48,    // Large display numbers (streak count, etc.)
     displayMedium: 40,   // Medium display elements (icons, etc.)
 
     // Legacy/alternative sizes (for compatibility)
-    bodySmall: 11,       // Small body text
+    bodySmall: 12,       // Small body text
     buttonSmall: 11,     // Small button text
 } as const;

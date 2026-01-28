@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     },
     dateDay: {
         fontFamily: 'Prompt',
-        fontSize: FONT_SIZES.small,
+        fontSize: FONT_SIZES.bodySmall,
         color: theme.colors.ocean,
         marginBottom: theme.spacing.xs,
     },
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     },
     dateNumber: {
         fontFamily: 'Prompt',
-        fontSize: FONT_SIZES.small,
+        fontSize: FONT_SIZES.bodySmall,
         color: theme.colors.ocean,
     },
     dateNumberSelected: {

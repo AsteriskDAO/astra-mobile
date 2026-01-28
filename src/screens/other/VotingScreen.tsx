@@ -36,7 +36,7 @@ const VotingScreen: React.FC = () => {
             <BackgroundPattern />
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
                 <SecondaryHeader
-                    title="Your voice matters"
+                    title="Your Vote Matters"
                     onBack={() => navigation.goBack()}
                     rightElement={
                         <View style={styles.profileIconContainer}>
@@ -57,7 +57,7 @@ const VotingScreen: React.FC = () => {
 
                     {/* Question */}
                     <View style={styles.questionSection}>
-                        <Text style={styles.questionTitle}>What's next</Text>
+                        <Text style={styles.questionTitle}>What's Next</Text>
                         <Text style={styles.instruction}>Asterisk is organized as a DAO, meaning you can vote on our roadmap and plan. Below you’ll find any open votes.</Text>
                         <Text style={styles.instruction}>Thanks for your input!</Text>
                     </View>
@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
         ...theme.typography.presets.h3,
         color: theme.colors.textPrimary,
         marginBottom: theme.spacing.sm,
+        fontSize: FONT_SIZES.h4,
     },
     instruction: {
         ...theme.typography.presets.body,
@@ -300,7 +301,7 @@ const styles = StyleSheet.create({
     },
     resultVotes: {
         fontFamily: 'monospace',
-        fontSize: FONT_SIZES.small,
+        fontSize: FONT_SIZES.bodySmall,
         lineHeight: 10,
         color: theme.colors.textSecondary,
     },
